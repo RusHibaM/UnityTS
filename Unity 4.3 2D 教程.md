@@ -136,6 +136,65 @@ Zombie Conga 是一个横向卷轴（side-scrolling）游戏，但是到目前�
 
 你会需要新的猫咪不停地出现在沙滩上直到玩家获胜或是输掉游戏。为了处理这个问题，你需要创建一个全新的脚本并添加一个空的GameObject。
 
+注：你可以在场景的生命周期内将这个脚本添加到任何已经存在的 GameObject 上，比如僵尸（zombie）或者主摄影机（Main Camera）。但是使用专用的对象让你可以赋予它一个描述性的名字，这样的方式使得你能够更容易地在 Hierarchy 中找到你需要设置的对象。
+
+在 Unity 菜单中选择 GameObject\Create Empty 以创建新的空的游戏对象。我们将本例中创建的对象命名为 Kitten Factory。
+
+创建一个叫做 KittyCreator 的 C# 脚本并附属在刚才创建的 Kitten Factory 下。接下来就没有创建新脚本的提示了，你应该能够自己应付了。（但是如果你实在自己应付不了，就去查看这个系列教程之前的部分吧）
+
+打开 MonoDevelop 中的 KittyCreator.cs 并将其中的内容替换为如下代码：
+
+	using UnityEngine;
+ 
+	public class KittyCreator: MonoBehaviour 
+	{
+	//1
+	public float minSpawnTime = 0.75f; 
+	public float maxSpawnTime = 2f; 
+ 
+	//2    
+	void Start () 
+	{
+    Invoke("SpawnCat",minSpawnTime);
+	}
+ 
+	//3
+	void SpawnCat()
+	{
+    Debug.Log("TODO: Birth a cat at " + Time.timeSinceLevelLoad);
+    Invoke("SpawnCat", Random.Range(minSpawnTime, maxSpawnTime));
+	}
+	}
+	
+事实上这些代码并不能产生任何猫咪，他简单地将这项工作留给了 groundwork。以下是这段代码做了什么：
+
+1.minSpawnTime 和 maxSpawnTime 决定猫咪产生的频率。在一只猫咪产生之后，KittyCreator 会在等待至少 minSpawnTime 秒和至多 maxSpawnTime 秒后产生下一只猫咪。你将他们定义为公用的所以你之后可以在编辑器中按照你的喜好修改猫咪产生的速度。
+
+2.Unity 的 Invoke 方法可以让你在指定的延迟后调用另一个方法。 Start 会调用 Invoke 方法，命令它等待 minSpawnTime 秒并在以后调用 SpawnCat。这会在场景开始播放后加入一段没有猫咪产生的时期。
+
+3.现在 SpawnCat 会简单地记录一条消息使得你可以在它运行并使用 Invoke 来规划另一个对于 SpawnCat 的调用的时候知道它正在进行这些操作。猫喵产生的间隔时间是一个随机产生的介于 minSpawnTime 与 maxSpawnTime 的值，这样猫咪产生的时间间隔就看起来不是可预见的了。
+
+保存文件（File\Save）并转回Unity.</br>
+运行这个场景，你将可以看到在 Console 中出现的日志，如下图所示：
+
+![Alt text](http://cdn2.raywenderlich.com/wp-content/uploads/2015/04/cat_spawn_msg.png) 
+
+这样你的 Kitten Factory 就可以按照规划工作了，你需要让它产生（原文使用spit out）一些猫咪。为了达到这一目的，你需要使用Unity 最强大的特性之一：Prefabs。
+
+##Prefabs
+Prefabs 现在在你的 Project 中，而不是在你场景的 Hierarchy 中。你可以将 Prefabs 用作在你的场景中创建对象的模板。
+
+但是，这些实例并不仅仅是原始 Prefabs 的副本。取而代之的是，Prefab 定义了一个对象的默认值，接下来你可以自由地修改你的场景中的特定实例，而不会影响其他同样通过这个 Prefab 创建的对象。
+
+在 Zombie Conga 中，你希望创建一个猫咪 Prefab 并且让 Kitten Factory 在场景中的不同位置创建该 Prefab 的实例。但是在你的场景中不是已经有了一个猫咪对象了吗？并且你不是已经通过你自己设置好的所有的动画，物理效果和脚本配置好了吗？可以确定的是，如果制作一个 Prefab 的时候你必须重做这些步骤，这一定很恼人吧。幸运的是，你的确不必。
+
+为了将它变为一个 Prefab，你只需要简单地将 cat 从 Hierarchy 中拖动到 Project 浏览器中。你可以在 Project 浏览器中看到一个新建的 cat Prefab 对象，但是你同样需要注意的是，单词 cat 在 Hierarchy 中变成了蓝色，就像下图所示：
+
+![Alt text](http://cdn5.raywenderlich.com/wp-content/uploads/2015/04/create_cat_prefab.gif) 
+
+
+	
+	
 
 
 
