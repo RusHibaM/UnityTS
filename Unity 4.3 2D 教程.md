@@ -79,9 +79,9 @@ Zombie Conga 是一个横向卷轴（side-scrolling）游戏，但是到目前�
 	spriteWidth = spriteRenderer.sprite.bounds.size.x;
 	
 以上的代码会按如下方式初始化你添加的变量：</br>
-1.寻找到场景的主摄影机（camera）对象（Zombie Conga的为一个摄影机）并且通过设置将 cameraTransform 指向这个摄影机（camera）的 Transform
+1. 寻找到场景的主摄影机（camera）对象（Zombie Conga的为一个摄影机）并且通过设置将 cameraTransform 指向这个摄影机（camera）的 Transform
 
-2.将对象的内建渲染器属性（object’s built-in renderer property）传递到 SpriteRenderer 以获取精灵（sprite）的属性，这样就能从精灵的属性中得到精灵的 bounds。bounds 对象有一个尺寸属性，它的 x 元件（x component）掌握着对象的宽度（width），并储存在 spriteWidth 中。
+2. 将对象的内建渲染器属性（object’s built-in renderer property）传递到 SpriteRenderer 以获取精灵（sprite）的属性，这样就能从精灵的属性中得到精灵的 bounds。bounds 对象有一个尺寸属性，它的 x 元件（x component）掌握着对象的宽度（width），并储存在 spriteWidth 中。
 
 为了判定背景精灵已经超出屏幕，你应该实行（implement）OnBecameInvisible，就像你在处理敌人的时候那样。但是既然你已经学过这一部分知识了，所以这一次你可以直接检测对象的位置了。
 
@@ -168,11 +168,11 @@ Zombie Conga 是一个横向卷轴（side-scrolling）游戏，但是到目前�
 	
 事实上这些代码并不能产生任何猫咪，他简单地将这项工作留给了 groundwork。以下是这段代码做了什么：
 
-1.minSpawnTime 和 maxSpawnTime 决定猫咪产生的频率。在一只猫咪产生之后，KittyCreator 会在等待至少 minSpawnTime 秒和至多 maxSpawnTime 秒后产生下一只猫咪。你将他们定义为公用的所以你之后可以在编辑器中按照你的喜好修改猫咪产生的速度。
+1. minSpawnTime 和 maxSpawnTime 决定猫咪产生的频率。在一只猫咪产生之后，KittyCreator 会在等待至少 minSpawnTime 秒和至多 maxSpawnTime 秒后产生下一只猫咪。你将他们定义为公用的所以你之后可以在编辑器中按照你的喜好修改猫咪产生的速度。
 
-2.Unity 的 Invoke 方法可以让你在指定的延迟后调用另一个方法。 Start 会调用 Invoke 方法，命令它等待 minSpawnTime 秒并在以后调用 SpawnCat。这会在场景开始播放后加入一段没有猫咪产生的时期。
+2. Unity 的 Invoke 方法可以让你在指定的延迟后调用另一个方法。 Start 会调用 Invoke 方法，命令它等待 minSpawnTime 秒并在以后调用 SpawnCat。这会在场景开始播放后加入一段没有猫咪产生的时期。
 
-3.现在 SpawnCat 会简单地记录一条消息使得你可以在它运行并使用 Invoke 来规划另一个对于 SpawnCat 的调用的时候知道它正在进行这些操作。猫喵产生的间隔时间是一个随机产生的介于 minSpawnTime 与 maxSpawnTime 的值，这样猫咪产生的时间间隔就看起来不是可预见的了。
+3. 现在 SpawnCat 会简单地记录一条消息使得你可以在它运行并使用 Invoke 来规划另一个对于 SpawnCat 的调用的时候知道它正在进行这些操作。猫喵产生的间隔时间是一个随机产生的介于 minSpawnTime 与 maxSpawnTime 的值，这样猫咪产生的时间间隔就看起来不是可预见的了。
 
 保存文件（File\Save）并转回Unity.</br>
 运行这个场景，你将可以看到在 Console 中出现的日志，如下图所示：
@@ -192,6 +192,117 @@ Prefabs 现在在你的 Project 中，而不是在你场景的 Hierarchy 中。�
 
 ![Alt text](http://cdn5.raywenderlich.com/wp-content/uploads/2015/04/create_cat_prefab.gif) 
 
+在制作你自己的游戏的时候，在 Hierarchy 名字显示为蓝色的对象是 Prefabs 的实例。当你选择其中之一时，你会在监视器中看到如下的按钮：
+
+![Alt text](http://cdn2.raywenderlich.com/wp-content/uploads/2015/04/prefab_inspector_buttons.png)
+
+这个按钮在编辑 Prefabs 的实例时非常有用。它们让你可以完成如下工作：
+
+1. 选择：这个按钮在 Project 浏览器中选择被用来创建实例的 Prefab 对象。
+
+2. 还原：这个按钮会将任何你对实例做的本地修改恢复到 Prefab 中的默认值。
+
+3. 申请：这个按钮会获取所有你在该实例上所做的本地修改并将这些值设置到原来的 Prefab 上，将这些值设置为所有通过这个 Prefab 创建的实例的默认值。任何已经存在的由该 Prefab 得到的，还没有通过进行本地重写来设置这些值的实例会自动地把它们的默认值修改为最新设置的默认值。
+
+重要提示：点击 申请 按钮会影响所有共享这个对象的 Prefab 的 GameObject，不仅仅是目前这个场景中相关的 GameObject会受影响，整个project里面所有场景中相关的 GameObject 都会受到影响。
+
+现在你需要停止 Kitten Factory 对于你的 Console 的文字污染，你现在该让它用猫咪污染你的沙滩了！
+
+返回 MonoDevelop 中的 KittyCreator.cs 并在 KittyCreator 中添加如下变量：
+
+	public GameObject catPrefab;
+	
+你将你的 cat Prefab 分配给 Unity 编辑器中的 catPrefab，然后 KittyCreator 会在创建新的猫咪的时候将其用作模板。但是在你这么做以前，将 SpawnCat 的中 Debug.Log 行（Debug.Log line in SpawnCat）替换为如下代码：
+
+	// 1
+	Camera camera = Camera.main;
+	Vector3 cameraPos = camera.transform.position;
+	float xMax = camera.aspect * camera.orthographicSize;
+	float xRange = camera.aspect * camera.orthographicSize * 1.75f;
+	float yMax = camera.orthographicSize - 0.5f;
+ 
+	// 2
+	Vector3 catPos = new Vector3(cameraPos.x + Random.Range(xMax - xRange, xMax),
+              Random.Range(-yMax, yMax),
+              catPrefab.transform.position.z);
+ 
+	// 3
+	Instantiate(catPrefab, catPos, Quaternion.identity);
+
+以上的代码选择了一个随机的在摄影机（camera）可视范围内的位置并将新的猫咪放置在该位置。</br>具体地：
+
+1. 摄影机（camera）当前的位置和尺寸决定了场景的可视区域。你通过这些信息来计算出你希望放置一只新猫咪的区域的 x 和 y 值的界限。这个计算不会将猫咪放置在太靠近屏幕顶部或底部的位置亦或是很远的屏幕的左边界。如下的图片可以帮助你对其中包含的数学概念由一个视觉上的认识。
+
+2. 你创建一个新的包括固定的 catPrefab 的 z 位置（因此所有的猫咪会出现在相同的 z 层深度），随机的 x 值和 y 值的位置。这些随机值是在下图所示的区域内选取，这个所示区域比世纪场景的可见区域稍微小一些。
+
+3. 你调用 Instantiate 来创建 catPrefab 的实例并放置到场景中的一个由 catPos 决定的位置。你传递 Quaternion.identity 作为新对象的 rotation 因为你根本不希望新对象被旋转。相反，猫咪的旋转会由你在这个系列教程的第二部分完成的 spawn 动画来设置。
+
+注：这会让所有刚生成的猫咪的脸朝向同一个方向。如果你希望猫咪的脸朝向不同的方向，你可以向 Instantiate 传递一个围绕 z 轴的随机的转动而不是使用单位矩阵。但是值得注意的是，事实上，这在你读完这篇教程的后面的部分并进行一些修改之前并不会管用，
+
+![Alt text](http://cdn4.raywenderlich.com/wp-content/uploads/2015/04/cat_spawn_area.png)
+
+保存文件（File\Save）并转回Unity。
+
+你的场景中不再需要猫咪了因为你的工厂（factory）会在运行的时候创建它们。右键点击 Hierarchy 中的 cat 并选择弹出的菜单中的 Delete进行删除操作，如下图所示：
+
+![Alt text](http://cdn3.raywenderlich.com/wp-content/uploads/2015/04/delete_cat.png)
+
+选择 Hierarchy 中的 Kitten Factory。在监视器中，点击在Kitty Creator (Script) 元件（component）的 Cat Prefab 区域的小巧的 circle/target 图标，如下红色箭头所示：
+
+![Alt text](http://cdn1.raywenderlich.com/wp-content/uploads/2015/04/cat_prefab_field.png)
+
+再出现的 Select GameObject 对话框中，选择 Assets 选项卡内的 cat， 如下图所示：
+
+![Alt text](http://cdn3.raywenderlich.com/wp-content/uploads/2015/04/cat_prefab_selection.png)
+
+Kitten Factory 现在在监视器中看来是这个样子的：
+
+![Alt text](http://cdn1.raywenderlich.com/wp-content/uploads/2015/04/kitten_factory_inspector.png)
+
+如果你的 Kitten Factory 的 Transform 值和这里展示的有所不同，也请不要担心。Kitten Factory 的存在仅仅是为了保持 Kitty Creator 脚本 元件（Component）。它并不具备可视化的元件（component）所以它的 Transform 值是没有什么意义的。
+
+再次运行这个场景并看看任何你想看的地方，这片沙滩看上去已经可以咳出可爱的毛球了。（译者注：应该是说沙滩上已经由猫咪了，我的理解是猫咪会咳出毛球，所以作者此处用可以咳出毛球指代有猫咪，原文为 the very beach itself appears to be coughing up adorable fur balls.）。
+
+![Alt text](http://cdn1.raywenderlich.com/wp-content/uploads/2015/04/cats_spawning.png)
+
+但是仍然存在一个问题。当你玩这个游戏的时候，留意到数量庞大的猫咪在 Hierarchy 中被缓慢的建立，如下图所示：
+
+![Alt text](http://cdn2.raywenderlich.com/wp-content/uploads/2015/04/crazy_cat_clones-170x500.png)
+
+这样不行！如果你的游戏持续足够长的时间，这个排序逻辑会让游戏因为意外停止而崩溃。当你的猫咪试图关闭（go off）你的屏幕的时候，你应该将它们从屏幕中除去。
+
+打开 MonoDevelop 中的 CatController.cs 并将如下方法添加到 CatController 中：
+
+	void OnBecameInvisible() {
+	Destroy( gameObject ); 
+	}
+	
+这只是简单地调用 Destroy 来释放（destroy） gameObject。所有的 MonoBehaviour 脚本，比如 CatController，会接触到指向保持（hold）脚本的 GameObject 的 gameObject。虽然这种方法并没有表现出来，在调用完 Destroy 后再执行一个方法中的其他代码才是安全的因为其实 Unity 并不会马上释放（destroy）这个对象。
+
+注：你应该已经注意到了 CatController 中的另一个方法 GrantCatTheSweetReleaseOfDeath。这个方法为了和你现在使用 Destroy 方法相同的理由而使用 DestroyObject。这说明什么？
+</br>老实说，我也不清楚这两者间有什么不同。Unity的文档中包含了 Destroy 却没有包含 DestroyObject，但是它们看起来具有相同的作用。我或许只是输入了这两者中的其中之一，而编译器并没有报错，所以我就再没有考虑任何与这个问题相关的东西了。
+</br>如果你知道它们的不同或是知道为什么它们中的一个要优于另外一个，请在评论中提及，万分感谢！（截止发布，很遗憾我没有在原帖的评论或是其他地方找到这个问题的答案。）
+
+保存文件(File\Save)并转回Unity.
+
+再次运行这个场景。就像我们在本系列的第三部分提到的那样，只有到一个对象在所有摄影机（camera）视野之外的时候，OnBecameInvisible 才会被调用，所以请保证在测试本例的时候场景试图是不可见的。
+
+现在无论你玩多久，Hierarchy 中猫咪的数量永远不会超过某一个数量了。更具体地说，Hierarchy 会包含与场景中可以看到的猫咪数量相同的对象，如下图所示：
+
+![Alt text](http://cdn2.raywenderlich.com/wp-content/uploads/2015/04/cat_spawns_under_control.png)
+
+
+
+
+
+
+
+
+
+
+
+
+  
 
 	
 	
