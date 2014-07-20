@@ -192,7 +192,7 @@ Prefabs 现在在你的 Project 中，而不是在你场景的 Hierarchy 中。�
 
 ![Alt text](http://cdn5.raywenderlich.com/wp-content/uploads/2015/04/create_cat_prefab.gif) 
 
-在制作你自己的游戏的时候，在 Hierarchy 名字显示为蓝色的对象是 Prefabs 的实例。当你选择其中之一时，你会在监视器中看到如下的按钮：
+在制作你自己的游戏的时候，在 Hierarchy 名字显示为蓝色的对象是 Prefabs 的实例。当你选择其中之一时，你会在监视器（Inspector）中看到如下的按钮：
 
 ![Alt text](http://cdn2.raywenderlich.com/wp-content/uploads/2015/04/prefab_inspector_buttons.png)
 
@@ -247,7 +247,7 @@ Prefabs 现在在你的 Project 中，而不是在你场景的 Hierarchy 中。�
 
 ![Alt text](http://cdn3.raywenderlich.com/wp-content/uploads/2015/04/delete_cat.png)
 
-选择 Hierarchy 中的 Kitten Factory。在监视器中，点击在Kitty Creator (Script) 元件（component）的 Cat Prefab 区域的小巧的 circle/target 图标，如下红色箭头所示：
+选择 Hierarchy 中的 Kitten Factory。在监视器（Inspector）中，点击在Kitty Creator (Script) 元件（component）的 Cat Prefab 区域的小巧的 circle/target 图标，如下红色箭头所示：
 
 ![Alt text](http://cdn1.raywenderlich.com/wp-content/uploads/2015/04/cat_prefab_field.png)
 
@@ -255,7 +255,7 @@ Prefabs 现在在你的 Project 中，而不是在你场景的 Hierarchy 中。�
 
 ![Alt text](http://cdn3.raywenderlich.com/wp-content/uploads/2015/04/cat_prefab_selection.png)
 
-Kitten Factory 现在在监视器中看来是这个样子的：
+Kitten Factory 现在在监视器（Inspector）中看来是这个样子的：
 
 ![Alt text](http://cdn1.raywenderlich.com/wp-content/uploads/2015/04/kitten_factory_inspector.png)
 
@@ -291,6 +291,53 @@ Kitten Factory 现在在监视器中看来是这个样子的：
 
 ![Alt text](http://cdn2.raywenderlich.com/wp-content/uploads/2015/04/cat_spawns_under_control.png)
 
+注：在 Unity 的运行环境中创建或是释放（destroy）对象需要付出昂贵的代价。如果你正在制作一个仅仅比 Zombie Conga 复杂一点点的游戏，或许尽可能地重用那些对象是很有价值的。
+
+比如说，与其在一只猫咪离开屏幕时释放（destroy）掉它，不如再下次你需要生成一只猫咪时重用这个对象。你在处理敌人的时候已经使用了类似的方法，但是在处理猫咪的时候你需要同时保持整整一个列表的可重用对象并记住在重新使用它们来生成猫咪的时候重新将动画状态设置到初始状态。
+
+这种技术被称为 对象池（object pooling）并且你可以在 Unity 的[培训课程](http://unity3d.com/learn/tutorials/modules/beginner/live-training-archive/object-pooling)中找到一些相关的内容.
+
+OK,你现在已经得到了一片满是猫咪的沙滩，并且沙滩上还有一个到处闲逛寻找陪伴的僵尸。我觉得你应该已经知道我们做了什么以及接下来该做什么了。
+
+##Conga时刻！
+
+如果你从这个系列教程的第一部分开始就是忠实的读者，你或许已经开始怀疑为什么这个游戏被叫做Zombie Conga。
+
+![Alt text](http://cdn2.raywenderlich.com/wp-content/uploads/2015/04/wheres_the_conga2.png)
+
+是时候了。
+
+当这个僵尸撞到一个猫咪，你将把这个猫咪加入到 conga 线中（译者注：就是猫咪会一直跟着僵尸运动）。但是，你会想要当僵尸撞到敌人时能有不同的效果。为了区别撞击到的是猫咪还是敌人，你需要为它们分配不同的标签（tags）。
+
+###用标签（tags）来分辨对象
+
+Unity 允许你向任何 GameObject 分配一个字符串，这个字符串被称作标签（tag）。新创建的项目包含了一些默认的标签（tag），就像主摄影机（Main Camera）和玩家（Player），但是你可以自由地添加任何你希望添加的标签（tag）。
+
+在 Zombie Conga 中，你可以通过使用唯一一个标签来避免一些问题，因为在这个游戏中僵尸可以撞击的对象只有两种。比如说，你可以给猫咪添加一个标签（tag）并假设如果僵尸撞到一个没有这个标签的对象，就认为僵尸撞到的一定是敌人。但是，当你想要修改你的游戏的时候，这个快捷的方式反而会变成一个产生 bug 的好方法。
+
+为了让你的代码更容被读懂且更容易维护，你需要创建两个标签（tag）：猫咪和敌人。
+
+从 Unity 菜单中选择 Edit\Project Settings\Tags and Layers。监视器（Inspector）现在显示的是 Tags & Layers 编辑器。如果还没有打开，可以通过点击名字左侧的三角形来展开标签（tag）列表，如下图所示：
+
+![Alt text](http://cdn1.raywenderlich.com/wp-content/uploads/2015/04/empty_tags_list.png)
+
+在标记为 Element 0 的输入框中输入 cat。当你输入的时候，Unity会自动添加一个具有新的具有标记的输入框，新的标记为 Element 1.你的监视器（Inspector）看起来就像下面这个样子：
+
+![Alt text](http://cdn5.raywenderlich.com/wp-content/uploads/2015/04/cat_tag.png)
+
+注：除了你定义的标签（tag），Unity 会保持至少一个额外的标记了的输入框，所以无论什么时候，只要你在最后一个可输入的输入框输入了信息，它最会添加一个新的输入框。就算你改变输入框的 Size 的值来匹配你实际有的标签的数目，Unity 也会自动将这个数值改回为刚好比你现有的标签的数目大一个的值。
+</br>译者注：原文使用的 field 来表述可以进行输入的区域，所以我在这里译为“输入框”。
+
+在 Project 浏览器中选择 cat 并将监视器（Inspector）中的标记为 Tag 的复选框中选择 cat，如下图所示：
+
+![Alt text](http://cdn1.raywenderlich.com/wp-content/uploads/2015/04/setting_cat_tag.gif)
+
+当你在添加 cat 的标签（tag）的时候，你应该已经也添加了 enemy 的标签（tag）。但是我希望给你看一种不同的创建标签的方法。
+
+
+
+
+ 
 
 
 
