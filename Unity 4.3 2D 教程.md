@@ -278,7 +278,7 @@ Kitten Factory 现在在监视器（Inspector）中看来是这个样子的：
 	Destroy( gameObject ); 
 	}
 	
-这只是简单地调用 Destroy 来释放（destroy） gameObject。所有的 MonoBehaviour 脚本，比如 CatController，会接触到指向保持（hold）脚本的 GameObject 的 gameObject。虽然这种方法并没有表现出来，在调用完 Destroy 后再执行一个方法中的其他代码才是安全的因为其实 Unity 并不会马上释放（destroy）这个对象。
+这只是简单地调用 Destroy 来释放（destroy） gameObject。所有的 MonoBehaviour 脚本，比如 CatController，会访问指向保持（hold）脚本的 GameObject 的 gameObject。虽然这种方法并没有表现出来，在调用完 Destroy 后再执行一个方法中的其他代码才是安全的因为其实 Unity 并不会马上释放（destroy）这个对象。
 
 注：你应该已经注意到了 CatController 中的另一个方法 GrantCatTheSweetReleaseOfDeath。这个方法为了和你现在使用 Destroy 方法相同的理由而使用 DestroyObject。这说明什么？
 </br>老实说，我也不清楚这两者间有什么不同。Unity的文档中包含了 Destroy 却没有包含 DestroyObject，但是它们看起来具有相同的作用。我或许只是输入了这两者中的其中之一，而编译器并没有报错，所以我就再没有考虑任何与这个问题相关的东西了。
@@ -377,15 +377,200 @@ Unity 允许你向任何 GameObject 分配一个字符串，这个字符串被�
 
 ![Alt text](http://cdn1.raywenderlich.com/wp-content/uploads/2015/02/cat_anim_wiggle.gif)
 
-ß
+当你的僵尸撞到一只猫咪，你会希望这只猫咪变成一只僵尸猫咪。下面这张图片向你展示了如何在动画窗口（Animator window）里，通过将猫咪的 InConga 参数设置为 true 来实现这一想法。
 
-
-
-
+![Alt text](http://cdn2.raywenderlich.com/wp-content/uploads/2015/02/cat_conga_working.gif)
  
+现在你会希望用内部代码来做一些相同的事情。为了这么做，回到 MonoDevelop 中的 CatController.cs 并向 CatController 中添加如下方法：
+
+	public void JoinConga() {
+	collider2D.enabled = false;
+	GetComponent<Animator>().SetBool( "InConga", true );
+	}
+
+第一行代码禁用了猫咪的碰撞事件。在僵尸撞到一只猫咪的时候，这可以避免 Unity 发送超过一个碰撞事件。（之后为了处理这个问题，你将用一个另外的办法来处理僵尸与敌人（enemy）的碰撞）
+
+第二行代码在猫咪的动画元件（Animator Component）将 InConga 设置为 true。通过这个做法，你触发了一个状态转换，将 CatWiggle 动画剪辑（Animation Clip）转换到 CatZombify 动画剪辑（Animation Clip）。你将通过本系列第三部分提到的动画窗口（Animator window）来设置这个转换。
+
+顺便提一句，你必须注意到你将 JoinConga 声明为公开（public）。这样你就可以在其他脚本中调用它，这也正是你正在做的。
+
+保存 CatController.cs (File\Save) 并转回依然是在 MonoDevelop 中 ZombieController.cs。
+
+在 ZombieController 里面的 OnTriggerEnter2D 中找到如下这行代码：
+
+	Debug.Log ("Oops. Stepped on a cat.");
+	
+然后将这行代码更换为：
+
+	other.GetComponent<CatController>().JoinConga();
+	
+现在无论什么时候，只要僵尸撞到了一只猫咪，就会在猫咪的 CatController 组件（component）上调用 JoinConga。
+
+保存文件（File\Save）并转回 Unity.
+
+播放场景，可以看到当僵尸穿过一只猫咪的时候，猫咪会变成绿色并开始在原地跳动。到目前为止，看起来还行。
+
+![Alt text](http://cdn1.raywenderlich.com/wp-content/uploads/2015/04/zombification_1.gif)
+
+没有人希望看到一大堆猫咪零散地分布在沙滩上。你所希望的是它们加入到你僵尸坚持不懈的舞蹈当中，你需要教会这些猫咪怎么样区跟随它们的僵尸老大。
+
+###Conga 运动
+
+你需要一个 List 来追踪哪些猫咪已经加入到 conga 线了（译者注：就是指哪些猫咪已经在跟随着僵尸运动了）。
+
+回到 MonoDevelop 中的 ZombieController.cs。
+
+首先，将如下这条这额外的 using 语句添加到文件的开头位置：
+
+	using System.Collections.Generic;
+
+这条 using 语句和 Objective-C 中的 #import 语句是相似的。它使得脚本可以访问特定的命名空间和这些命名空间中的类型（types）。在本例中，你需要访问 Generic 命名空间来声明一个具有特定数据类型的 List。
+
+将如下私有变量（private variable）添加到 ZombieController 中：
+
+	private List<Transform> congaLine = new List<Transform>();
+	
+congaLine 会为 conga 线中的猫咪储存 Transform 对象。你正在储存 Transform 而不是 GameObject 因为你大部分时间需要应付的是猫咪的位置。而且不管怎么说，如果你实在需要访问其他的部分，你可以通过其 Transform 获取该 GameObject 的任何部分。
+
+每一次僵尸碰到猫咪，你会把这个猫咪的 Transform 附加到 congaLine。这意味着 congaLine 中第一个 Transform 代表者刚好在僵尸后面那个猫咪，第二个 Transform 代表着第一只猫咪后面的那只猫咪，依此类推。
+
+为了将猫咪添加到 conga 线中，在 ZombieController 的 OnTriggerEnter2D 中添加如下这行代码，只需要放置在调用 JoinConga 的那一行的后面：
+
+	congaLine.Add( other.transform );
+
+这一行代码将猫咪的 Transform 添加到了 congaLine 中。
+
+如果你打算现在运行这个场景，你不会看到任何的变化。因为你只是在维护一个满是猫咪的 list，却没有写任何代码让猫咪从加入 conga 线的初始位置起一直跟着僵尸移动。所以当僵尸领头的 conga 线移动的时候，这看起来一点也不欢乐。
+
+为了解决这个问题，打开 MonoDevelop 中的 CatController.cs。
+
+移动猫咪的代码和你在本系列的第一部分中写的移动僵尸的代码是相似的。开始吧，将如下的实例变量加入到 CatController：
+
+	private Transform followTarget;
+	private float moveSpeed; 
+	private float turnSpeed; 
+	private bool isZombie;
+	
+你将会使用 moveSpeed 和 turnSpeed 来控制猫咪运动的频率，就像你在控制僵尸运动时所做的那样。你只希望猫咪在变成僵尸猫咪以后才开始运动，所以你会一直检测 isZombie 变量的值来确定猫咪是否已经变成了僵尸猫咪。最后 followTarget 会保持一个指向这个猫咪队列中前一个目标（可能是一只猫咪，也可能是那个僵尸）的引用（reference）。你会使用这个来计算它移动到的位置。
+
+以上的变量都是私有的（private），所以你会在想我该怎么设置它们。为了让 conga 线运动看起来是自然的，你会以僵尸的运动和转速度（turn speeds）为基础设置猫咪的动作。因此，在整个僵尸运动的过程中，你得让僵尸把运动的信息传递给队列中的每一只猫咪。
+
+在 CatController.cs 中将 JoinConga 的 implementation更换为如下代码：
+
+	//1
+	public void JoinConga( Transform followTarget, float moveSpeed, float turnSpeed ) {
+ 
+	//2
+	this.followTarget = followTarget; 
+	this.moveSpeed = moveSpeed;
+	this.turnSpeed = turnSpeed;
+ 
+	//3
+	isZombie = true;
+ 
+	//4
+	collider2D.enabled = false;
+	GetComponent<Animator>().SetBool( "InConga", true );
+	}
+	
+以下是对于新版本 JoinConga 的分析与解释：
+
+1. 这个方法现在需要一个目标 Transform，一个运动的速度和一个转速度（turn speeds）。接着你会改变 ZombieController 以通过适当的值调用 JoinConga。
+
+2. 这几行会储存传递到方法中的变量。注意通过使用 this. 来区别同名的猫咪的变量和该方法的参数
+
+3. 这会将猫咪标记为僵尸猫咪。接下来你会看到这一步是多么的重要
+
+4. 这最后的两行和之前版本的 JoinConga 是完全相同的。
+
+现在向 CatController 中加入 Update 的 implementation 如下：
+
+	void Update () {
+	//1
+	if(isZombie)
+	{
+    	//2
+    	Vector3 currentPosition = transform.position;            
+    	Vector3 moveDirection = followTarget.position - currentPosition;
+ 
+    	//3
+    	float targetAngle = 
+      Mathf.Atan2(moveDirection.y, moveDirection.x) * Mathf.Rad2Deg;
+    	transform.rotation = Quaternion.Slerp( transform.rotation, Quaternion.Euler(0, 0, targetAngle), turnSpeed * Time.deltaTime );
+ 
+    	//4
+    	float distanceToTarget = moveDirection.magnitude;
+    	if (distanceToTarget > 0)
+    	{
+      		//5
+      		if ( distanceToTarget > moveSpeed )
+        		distanceToTarget = moveSpeed;
+ 
+      		//6
+      		moveDirection.Normalize();
+      		Vector3 target = moveDirection * distanceToTarget + currentPosition;
+      		transform.position = Vector3.Lerp(currentPosition, target, moveSpeed * Time.deltaTime);
+    	}
+	}
+	}
+	
+这看起来有一点复杂，但是实际上大部分和你所写的移动僵尸的代码是一样的。我们来看看这些代码做了些什么：
+
+1. 你不希望猫咪在加入到 conga 线以前开始运动，所以只要猫咪在屏幕中处于激活状态（译者注：即可操作状态），Unity 会在每一帧调用一次 Update。这项检测机制会保证猫咪不会在不该活动的时候活动。
+
+2. 如果这个猫咪已经在 conga 线上了，这个方法会获取猫咪当前的位置并计算从它目前的位置到 followTarget（译者注：就是这只猫咪一直跟随着的那个目标，也就是队列中的上一只猫咪或者那个僵尸） 的位置的向量。
+
+3. 这些代码让猫咪始终朝向它运动的方向。这和你在本系列第一部分中写在 ZombieController.cs 中的代码是一样的。
+
+4. 接下来会检测 moveDirection 的 magnitude－－也就是运动向量的长度（length），这里没有任何和数学相关的东西－－并且检测目前这只猫咪是不是已经到达了目标位置。
+
+5. 这项检测确保了猫咪不会以超出每秒 moveSpeed 的速度运动。
+
+6. 最后，猫咪按照一个基于 Time.deltaTime 的适当距离运动。这基本上和你在本系列第一部分中写在 ZombieController.cs 中的代码一样。
+
+你现在已经完成了 CatController.cs，所以保存文件吧（File\Save）.
+
+因为你更改了 JoinConga 方法的签名（signature），你需要修改 ZombieController 中调用这个方法的那行代码。转回到 MonoDevelop 中的 ZombieController.cs。
+
+在 OnTriggerEnter2D 中，将调用 JoinConga 的代码替换为如下代码：
+
+	Transform followTarget = congaLine.Count == 0 ? transform : congaLine[congaLine.Count-1];
+	other.GetComponent<CatController>().JoinConga( followTarget, moveSpeed, turnSpeed );
+	
+看上去特别麻烦的第一行代码会算出哪一个对象是 conga 线中处于这只猫咪以前的对象。如果这条 conga 线是空的，就将僵尸的 Transform 分配给 followTarget。否则，就会使用 congaLine 中储存的最后一项。
+
+接下来这行代码调用了 JoinConga，并且这一次将正在跟随的目标，僵尸的动作和转速度传递给它。
+
+保存文件(File\Save)并转回Unity.
+
+运行场景你会发现你的 conga 线已经在那儿了。看上去是井然有序的，但是实际上却不是这样的哦。
+
+当你在运行这个场景的时候，你或许已经发现了如下的问题：
+
+1. 当任何 conga 线上的猫咪跑到屏幕外面以后，它会被从场景中清除然后 Unity 会在 console 中打印出如下的异常（exception）：
+
+![Alt text](http://cdn2.raywenderlich.com/wp-content/uploads/2015/04/exception_destroying_cats_in_conga.png)
+ 
+2. 这条 conga 线的运动太过完美了。它流畅得像一条蛇，但是你在 CatConga 中定义的动画希望得到的是快乐跳舞中的僵尸猫咪，而不是滑动的“蛇猫”。你知道快乐跳舞中的僵尸猫咪是什么样子，难道不是吗？
+
+3. 猫咪总会直接指向右边，不管它们到底是在忘哪个方向移动。僵尸猫咪看起来是一样的，但看起来像是彻头彻尾的幽灵。
+
+这些问题碰巧被按照从易到难的顺序排序了。既然想要解决第一个问题看起来很简单，就让我们从这个问题开始吧。
+
+回到 MonoDevelop 里面的 CatController.cs。
+
+你已经加入了 isZombie 来追踪猫咪是否变成了僵尸猫咪。在 OnBecameInvisible 的开头加入如下这一行以避免对于已经变成僵尸的猫咪的删除：
+
+	if ( !isZombie )
+
+保存文件(File\Save)并转回Unity.
+
+再一次运行这个场景，现在 conga 线上的猫咪可以自由且安全地离开屏幕，然后又跳着舞回到视野当中了
+
+![Alt text](http://cdn5.raywenderlich.com/wp-content/uploads/2015/04/better_conga_line.gif)
 
 
-
+###修正 conga 动画
 
 
 
