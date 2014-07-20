@@ -5,7 +5,7 @@
 
 欢迎回到我们的 Unity 4.3 2D 系列教程。
 
-的确，Unity 4.5在不久前已经发布了。但是本系列主要涉及的是Unity的2D特效，而这些特效正是在Unity 4.3版本中才被首次引入的。在4.5版本中，我们修复了一些bug并稍微修改了一些GUI元素。所以，如果你正在使用一个更新版本的引擎你应该时刻留意这一点，并且你应该注意你自己的编辑器与这个网页中的截图之间的细微差别。
+的确，Unity 4.5在不久前已经组合框发布了。但是本系列主要涉及的是Unity的2D特效，而这些特效正是在Unity 4.3版本中才被首次引入的。在4.5版本中，我们修复了一些bug并稍微修改了一些GUI元素。所以，如果你正在使用一个更新版本的引擎你应该时刻留意这一点，并且你应该注意你自己的编辑器与这个网页中的截图之间的细微差别。
 
 通过这个系列教程的第一、二、三部分，你已经大致学会了使用Unity 2D工具所需要的相关知识，包括如何引入和初始化你的精灵。
 
@@ -78,7 +78,8 @@ Zombie Conga 是一个横向卷轴（side-scrolling）游戏，但是到目前�
 	SpriteRenderer spriteRenderer = renderer as SpriteRenderer;
 	spriteWidth = spriteRenderer.sprite.bounds.size.x;
 	
-以上的代码会按如下方式初始化你添加的变量：</br>
+以上的代码会按如下方式初始化你添加的变量：
+
 1. 寻找到场景的主摄影机（camera）对象（Zombie Conga的为一个摄影机）并且通过设置将 cameraTransform 指向这个摄影机（camera）的 Transform
 
 2. 将对象的内建渲染器属性（object’s built-in renderer property）传递到 SpriteRenderer 以获取精灵（sprite）的属性，这样就能从精灵的属性中得到精灵的 bounds。bounds 对象有一个尺寸属性，它的 x 元件（x component）掌握着对象的宽度（width），并储存在 spriteWidth 中。
@@ -328,11 +329,55 @@ Unity 允许你向任何 GameObject 分配一个字符串，这个字符串被�
 注：除了你定义的标签（tag），Unity 会保持至少一个额外的标记了的输入框，所以无论什么时候，只要你在最后一个可输入的输入框输入了信息，它最会添加一个新的输入框。就算你改变输入框的 Size 的值来匹配你实际有的标签的数目，Unity 也会自动将这个数值改回为刚好比你现有的标签的数目大一个的值。
 </br>译者注：原文使用的 field 来表述可以进行输入的区域，所以我在这里译为“输入框”。
 
-在 Project 浏览器中选择 cat 并将监视器（Inspector）中的标记为 Tag 的复选框中选择 cat，如下图所示：
+在 Project 浏览器中选择 cat 并将监视器（Inspector）中的标记为 Tag 的组合框中选择 cat，如下图所示：
 
 ![Alt text](http://cdn1.raywenderlich.com/wp-content/uploads/2015/04/setting_cat_tag.gif)
 
 当你在添加 cat 的标签（tag）的时候，你应该已经也添加了 enemy 的标签（tag）。但是我希望给你看一种不同的创建标签的方法。
+
+很多时候当你决定要标记某一个对象的时候，只需要检查监视器（Inspector）中标签（tag）的组合框并确定你希望使用的标签（tag）并不存在。你可以在标签（Tags）的组合框中直接打开 Tags and Layers 编辑器而不用再去浏览 Unity 的编辑器菜单。
+
+在 Hierarchy 中选择 enemy。在监视器（Inspector）中从标签（tag）的组合框选择添加标签（ Add Tag…），如下图所示：
+
+![Alt text](http://cdn4.raywenderlich.com/wp-content/uploads/2015/04/add_tag_menu.png)
+
+监视器（Inspector）中再一次显示 Tags & Layers 编辑器。在标签（Tags）部分中，在标记为 Element 1 的输入框中输入 enemy。监视器（Inspector）现在看起来如下图所示：
+
+![Alt text](http://cdn5.raywenderlich.com/wp-content/uploads/2015/04/tags_in_list.png)
+
+新标签（tag）的创建已经完成了，现在选择 Hierarchy 中 enemy并将它的标签（Tag）设置为上一段中输入的 enemy。如下图所示：
+
+![Alt text](http://cdn3.raywenderlich.com/wp-content/uploads/2015/04/enemy_tag_set.png)
+
+嗯，现在你的对象已经被打上标签了，你可以在你的脚本中轻松辨识它们了。该怎么样呢，打开 MonoDevelop 中的 ZombieController.cs 并用如下代码将 OnTriggerEnter2D 中的内容替换掉。
+
+	if(other.CompareTag("cat")) 
+	{
+		Debug.Log ("Oops. Stepped on a cat.");
+	}
+	else if (other.CompareTag("enemy")) 
+	{
+		Debug.Log ("Pardon me, ma'am.");
+	}
+
+
+你可以通过调用 CompareTag 来检查一个特定的 GameObject 是否已经被打上了标签（tag）。只有 GameObject 能够有标签（tag），但是在元件（Component）上调用这个方法－－就像你正在做的这样－－检查这个元件（Component）的 GameObject 的标签（tag）
+
+保存文件（File\Save）并转回Unity.
+
+运行场景，无论僵尸撞到的是猫咪还是敌人，你都应该在 Console 中看到一些适当的消息。如下图所示：
+
+![Alt text](http://cdn4.raywenderlich.com/wp-content/uploads/2015/04/collision_msgs.png)
+
+现在你知道你的碰撞测试已经被正确设置了。是时候让它们为你做点什么了！
+
+##从脚本触发动画
+
+还记得你在本系列的第二、三部分中制作的动画吗？猫咪在快乐地上下摆动，就像这样
+
+![Alt text](http://cdn1.raywenderlich.com/wp-content/uploads/2015/02/cat_anim_wiggle.gif)
+
+ß
 
 
 
