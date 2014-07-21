@@ -572,8 +572,126 @@ congaLine 会为 conga 线中的猫咪储存 Transform 对象。你正在储存 
 
 ###修正 conga 动画
 
+要使得猫咪看起来像是在跳着舞享受它们的僵尸生活，你需要稍微改变一下逻辑。每一只猫咪会在超过一个 CatConga 动画周期中选择一个点然后跳向那个点，而不是在每一帧计算目标位置。然后猫咪会选择另一点而后跳向那个点，依此类推。
 
+转回到 MonoDevelop 中的 CatController.cs 并向 CatController 添加如下变量：
 
+	private Vector3 targetPosition;
+
+这会储存猫咪现在的目标位置。猫咪在到达目标地点前会一直运动，直到到达目标地点后才会去寻找新的目标。
+
+通过在 JoinConga 中添加如下这一行来初始化 targetPosition：
+
+	targetPosition = followTarget.position;
+
+现在你将 followTarget 现在的位置设置给 targetPosition。这保证了猫咪在加入 conga 线以后立刻有地方可以去。
+
+用如下这一行代码替换 Update 中声明 moveDirection 的那一行：
+
+	Vector3 moveDirection = targetPosition - currentPosition;
+	
+这行代码使用储存的 targetPosition 而不是 followTarget 现在的位置来计算 moveDirection。
+
+保存文件(File\Save)并转回 Unity.
+
+再次运行，当僵尸蹦蹦跳跳地撞到一些可爱的猫咪的时候……嗯……好像有什么地方不对。
+
+![Alt text](http://cdn2.raywenderlich.com/wp-content/uploads/2015/04/bad_follow_target.gif)
+
+无论什么时候，每当僵尸撞到一只猫咪，这只猫咪会径直跑到 conga 线上一个成员被僵尸撞到时的位置去。这样的话，就成了图中这副模样了。永远……
+
+问题是当猫咪加入到 conga 线的时候你会分配 targetPosition，但是在那之后你却再没有更新它了。你还真是有点糊涂耶！
+
+转回 MonoDevelop 中的 CatController.cs 并添加如下方法：
+
+	void UpdateTargetPosition()
+	{
+		targetPosition = followTarget.position;
+	}
+	
+这个方法会简单地用 followTarget 现在的位置来更新 targetPosition。targetPosition 已经被更新了，所以你不需要再写其他的代码来把猫咪送到新的位置。
+
+保存文件并转回 Unity。
+
+回顾本系列的第三部分可以发现动画剪辑器能够触发事件。你会在 CatConga 的第一桢期间添加一个调用 UpdateTargetPosition 的事件，来让猫咪可以在每一跳之前计算它们的下一个目标位置。
+
+但是通过回顾之前的部分，你会发现在你的项目中，你只能在你的场景中为一个 GameObject 编辑动画而不能为一个 Prefab 编辑动画。所以为了创建一个动画时间，你需要先在场景中暂时添加一只猫咪。
+
+从项目（Project）浏览器中将 cat Prefab 拖到 Hierarchy 中。
+
+在 Hierarchy 中选择 cat 然后转回到 Animation 视图（Window\Animation）。
+
+在 Animation 窗口控制条中的剪辑下来菜单中选择 CatConga。
+
+按下 Animation 视图的 Record 按钮以进入记录（recording）模式并将 scrubber 移动到第0桢，如下图所示：
+
+![Alt text](http://cdn1.raywenderlich.com/wp-content/uploads/2015/04/animation_record_mode.png)
+
+按下 Add Event 按钮如下图所示：
+
+![Alt text](http://cdn1.raywenderlich.com/wp-content/uploads/2015/04/add_event_button.png)
+
+在出现的 Edit Animation Event 对话框中的 Function 组合框中选择 UpdateTargetPosition() ，如下图所示，然后就可以关闭对话框了。
+
+![Alt text](http://cdn2.raywenderlich.com/wp-content/uploads/2015/04/edit_anim_event_dialog.png)
+
+完成这项设置以后，你的猫咪们会同步更新它们的目标和动画。
+
+再一次运行这个场景，现在猫咪会在点与点之间跳动，就像你在下面这段被加速的动画中看到的那样：（虽然在这段GIF中并不明显，但是相信我……猫咪们真的是在跳……）
+
+![Alt text](http://cdn4.raywenderlich.com/wp-content/uploads/2015/04/good_follow_target.gif)
+
+哈哈，管用了！但是猫咪看起来分散得太开了。这些猫咪看起来不太像是在同一条 conga 线上了。
+
+转回到 MonoDevelop 中的 MonoDevelop.cs 
+
+在 JoinConga 中，将设置 this.moveSpeed 的那行代码更换为如下这一行：
+
+	this.moveSpeed = moveSpeed * 2f;
+
+现在你将猫咪的速度设置为僵尸的两倍。这样就能得到一条更加紧凑的 conga 线了。
+
+保存文件(File\Save)并转回 Unity.
+
+再次运行这个场景你可以发现 conga 线看上去更加友好了，就像下面这个加速队列（sped-up sequence）展现的那样：
+
+![Alt text](http://cdn5.raywenderlich.com/wp-content/uploads/2015/04/conga_speed_2.gif)
+
+如果你喜欢的话，你可以实验着用比2大的倍数来加倍猫咪的速度，这样就可以尝试不同的 conga 线风格啦。这个数字越大，猫咪追逐它目标的速度就越快，就更给人一种“神经过敏”（jumpy）的feeling。
+
+这些猫咪会自如地移动了，除了它们还不能一直面朝自己运动的方向。该怎么办呢？其实，这就是 Unity 工作的方式而且没有办法可以解决。非常抱歉，教程结束了。
+
+![Alt text](http://cdn2.raywenderlich.com/wp-content/uploads/2015/04/no_tutorial_surprise2.png)
+
+啊哈哈哈哈，我是骗你的！这里有一个解释加一个解决方案！
+
+###让动画和脚本完美地一起运行
+
+为什么被设置了动画的 GameObject 不肯被创造它们的脚本改变呢？这是一个普遍的问题，所以花些时间找到一个好的解决方案是很有价值的。
+
+首先，这是怎么回事呢？当猫咪沿着这条 conga 线跳动的时候，它会一直播放 CatConga 动画剪辑。就像你在如下图像中看到的那样，CatConga会在猫咪的 Transform 中调整（adjust） Scale 属性：
+
+![Alt text](http://cdn3.raywenderlich.com/wp-content/uploads/2015/04/catconga_scale.png)
+
+重要提示：如果今天你只能记住一件事情，请一定要记住下面这一段。
+
+事实证明如果一个动画剪辑修改了一个对象的 Transform 的任何一个方面，事实上它正在修改整个Transform。当你设置 CatConga 的时候，猫咪会被指向右侧，所以 CatConga 现在能保证让猫咪一直指向右侧。我们是不是应该对 Unity 说谢谢呢？
+
+还是有一个办法可以解决这个问题的，只是需要一些重构。基本上，你需要让你的猫咪成为其他 GameObject 的子结点（child）。然后你会在这个子结点上运行这段动画，只是修改父节点（parent）的位置和回转角度（rotation）。
+
+在重新安排你的对象之后，你需要对你的代码做一些小小的修改来让它可以继续工作。如果你之前才在你自己的项目中遇到这个问题，你或许曾经经历过接下来的这段过程。
+
+首先你需要将猫咪 Prefab 移动到父节点对象中。
+
+通过选择 Unity 菜单中的 GameObject\Create Empty 来创建新的空的游戏对象（game object）。将新的对象命名为 Cat Carrier。
+
+在 Hierarchy 中，拖动 cat 并在 Cat Carrier 上释放。我敢打赌这是将猫咪变成 carrier （译者注：不知道翻译成什么才合适，就保留了原文的单词）最不费力的方法了。
+
+你的 Hierarchy 现在看起来将是这个样子的：
+
+![Alt text](http://cdn4.raywenderlich.com/wp-content/uploads/2015/04/cat_in_carrier.png)
+
+当你生成敌人并指向（point to）主摄影机（Main Camera），就像[ Unity 4.3 2D Tutorial: Physics and Screen Sizes]()
 
 
 
