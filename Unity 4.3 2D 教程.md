@@ -109,7 +109,7 @@ Zombie Conga 是一个横向卷轴（side-scrolling）游戏，但是到目前�
 
 ![Alt text](http://cdn5.raywenderlich.com/wp-content/uploads/2015/04/bg_adjusted_1x.png) 
 
-保存文件（File\Save）并交换回Unity
+保存文件（File\Save）并交换回Unity。（译者注：原文为 Save the file (File\Save) and switch back to Unity. 下文中有许多相似和相同的句子，除特殊情况外，均翻译为此句的样式）
 
 播放场景，你可以看到背景离开屏幕然后最终又回到视野中，如下图加速序列（sped-up sequence）所示（下图经过加速）：
 
@@ -691,7 +691,88 @@ congaLine 会为 conga 线中的猫咪储存 Transform 对象。你正在储存 
 
 ![Alt text](http://cdn4.raywenderlich.com/wp-content/uploads/2015/04/cat_in_carrier.png)
 
-当你生成敌人并指向（point to）主摄影机（Main Camera），就像[ Unity 4.3 2D Tutorial: Physics and Screen Sizes]()
+当你生成敌人并指向（point to）主摄影机（Main Camera），就像在[ Unity 4.3 2D Tutorial: Physics and Screen Sizes](http://www.raywenderlich.com/70344/unity-2d-tutorial-physics-and-screen-sizes)里，你学会了对子结点的位置定义一个相对于父节点的偏移量。
+
+对于猫咪，你希望子结点在父节点的中心，所以如果将父节点设置在(x,y,z)位置，从本质上来说就是将子结点设置在(x,y,z)位置。
+
+因此，选择 Hierarchy 中的 cat，并确保它的 Transform 的位置是(0,0,0)，如下图所示：
+
+![Alt text](http://cdn2.raywenderlich.com/wp-content/uploads/2015/04/cat_transform.png)
+
+同样，选择 Hierarchy 中的 Cat Carrier 并确保它的 Transform 的位置为 （0，0，0）。虽然实际上它的 z 坐标位置是唯一关键的东西，但是把一切设置得规规整整总是件不错的事情（我发誓我绝对不是想要弄一个和整洁的猫咪相关的双关语才这么说的，原文为I swear I had no intention of making a Tidy Cat pun right there.）。
+
+为了限制你所需的改动代码的次数，你得将 CatController 从 cat 移到 Cat Carrier。
+
+在 Hierarchy 中选择 cat。在监视器（Inspector）里面，点击小齿轮图标（在对话框顶部的，Cat Controller (Script) 字样的右侧，如下图红色箭头所指）。在弹出的菜单中选择 Remove Component。如下图所示：
+
+![Alt text](http://cdn4.raywenderlich.com/wp-content/uploads/2015/04/remove_component.png)
+
+点击监视器（Inspector）上方的 Apply 按钮将所做的修改存回到相应的 Prefab 中，如下图所示：（译者注：如果读者对于 Prefab 的 Apply 不是特别清楚，可以查看本教程之前的讲述 Prefab 的部分）
+
+![Alt text](http://cdn1.raywenderlich.com/wp-content/uploads/2015/04/prefab_apply_button.png)
+
+选择 Hierarchy 中的 Cat Carrier。在监视器（Inspector）中，点击 Add Component 并选择弹出的菜单中的 Scripts\Cat Controller，如下图所示：
+
+![Alt text](http://cdn5.raywenderlich.com/wp-content/uploads/2015/04/add_script.gif)
+
+现在将 Cat Carrier 从 Hierarchy 中拖动到项目（Project）浏览器中使得它成为一个 Prefab。就像你创建猫咪 Prefab 那样，Hierarchy 中的 Cat Carrier 的名字变成了蓝色，这说明现在他已经是某个 Prefab 的实例了。如下图所示：
+
+![Alt text](http://cdn3.raywenderlich.com/wp-content/uploads/2015/04/cat_carrier_in_hierarchy.png)
+
+选择 Hierarchy 中的 Cat Carrier 并通过选择 Unity 菜单中的 Edit\Delete 将它删除。现在的 Hierarchy看起来就像下面这样：
+
+![Alt text](http://cdn3.raywenderlich.com/wp-content/uploads/2015/04/no_cat_carrier_in_hierarchy.png)
+
+在项目（Project）浏览器中，你现在有了一个名为 cat 的 Prefab和一个名为 Cat Carrier 的 Prefab，而这个 Prefab 自身包含了一个名为 cat 的Prefab，如下图所示：
+
+![Alt text](http://cdn3.raywenderlich.com/wp-content/uploads/2015/04/prefab_assets.png)
+
+这两个猫咪 Prefab 并不参考相同的东西，并且你现在已经不需要是非父节点的那一个了（译者注：就是指单独的那个名为 cat 的 Prefab）.为了避免在接下来产生混乱，鼠标右键点击那个非父节点的名为 cat 的 Prefab 并选择弹出的菜单中的 Delete，然后在出现的对话框中选择 Delete，如下图所示：
+
+![Alt text](http://cdn4.raywenderlich.com/wp-content/uploads/2015/04/delete_prefab.gif)
+
+最后，选择 Hierarchy 中的 Kitten Factory。就像你在下面这张图片中看到的那样，Kitty Creator (Script) 元件（component）的 Cat Prefab 区域显示为 “Missing (GameObject)”：
+
+![Alt text](http://cdn2.raywenderlich.com/wp-content/uploads/2015/04/kitty_creator_missing_prefab.png)
+
+那是因为 Cat Prefab 被设置为了一个早已被你删除的元素（asset）。
+
+将 Kitty Creator (Script) 元件（component）的 Cat Prefab 区域从 cat 修改为 Cat Carrier。如果你不记得怎么做了，你可以查看下面这篇攻略：</br>
+[Solution Inside: Need help setting the Cat Prefab field?](http://www.raywenderlich.com/71029/unity-4-3-2d-tutorial-scrolling-scenes-and-sounds)
+
+运行这个场景。这下你会发现当僵尸撞到猫咪时，Console 会出现与下图相似的异常，如下图所示：
+
+![Alt text](http://cdn5.raywenderlich.com/wp-content/uploads/2015/04/null_ref_exception-Recovered.png)
+
+双击 Console 中的一个异常，然后你会来到相应的那一行，这一行在 MonoDevelop 中是高亮（highlighted）的，如下图所示：（别慌，图中这些代码只是为了适应截图而被适当地调整过了）
+
+![Alt text](http://cdn4.raywenderlich.com/wp-content/uploads/2015/04/error_in_mono.png)
+
+之所以会出现这些异常是因为 ZombieController 在寻找与之相撞的 GameObject 上的 CatController 元件（component），但是那个元件（component）现在在 cat 的父节点————Cat Carrier 上，而不是在 cat 自己身上。
+
+将上图中高亮（highlighted）的那一行代码更换为如下这行代码：
+
+	other.transform.parent.GetComponent<CatController>().JoinConga( followTarget, moveSpeed, turnSpeed );
+
+你现在在使用猫咪的 Transform 来访问它的父节点，也就是 Cat Carrier。从那里开始，这一行的其他部分保持不变。
+
+注：你或许已经通过向 cat Prefab 加入一个新的脚本来解决这个问题。在那个脚本中，你可以加入一个 JoinConga 方法，这个方法简单地将它（译者注：指代上文的  cat Prefab）的参数传递给它父母的 CatController 元件（component）中的 JoinConga。这仅仅取决于你希望怎么样构建你的代码以及你希望你的对象们（objects）相互了解到什么程度。
+
+保存文件（File\Save）并转回到 Unity。
+
+运行这个场景。再一次，你会发现当僵尸撞到猫咪时，Console 会出现异常。这一次它们抱怨说缺少元件（component），就像这样：
+
+![Alt text](http://cdn1.raywenderlich.com/wp-content/uploads/2015/04/missing_component_exception-700x27.png)
+
+（我们已经做过一次了）双击 Console 中的一个异常，然后在 MonoDevelop 中来到相应的那一行。就像你所看到的，这一次问题在 CatController.cs中：
+
+![Alt text](http://cdn2.raywenderlich.com/wp-content/uploads/2015/04/error_in_mono_2b.png)
+
+
+
+
+
+
 
 
 
