@@ -938,13 +938,96 @@ congaLine 会为 conga 线中的猫咪储存 Transform 对象。你正在储存 
 </br>不能接收你（函数）的调用？
 </br>你有两个解决方案：
 
-
-
-
-
-
+方案一：你可以往 CatUpdater.cs 里加入一个方法，就像下面这个：
 	
+	void GrantCatTheSweetReleaseOfDeath()
+	{
+		  catController.GrantCatTheSweetReleaseOfDeath();
+	}
 
+但是要让这个方案管用，你得在 CatController.cs 中修改对于 GrantCatTheSweetReleaseOfDeath 的声明来使得这个方法是公开的（public），就像这样：
+
+	public void GrantCatTheSweetReleaseOfDeath()
+
+方案二：往 CatUpdater.cs 中添加如下这个方法是解决问题的更优途径：
+
+	void GrantCatTheSweetReleaseOfDeath()
+	{
+		Destroy( transform.parent.gameObject );
+	}
+
+这个方法将使得猫咪的父节点将自己移除，也就相当于移除了这只猫咪。
+
+处理完这个异常之后，是时候找到一个方案来防止敌人仅仅通过一次撞击就摧毁你的整条 conga 线了。
+
+首先，到底是发生了什么？就像你在 [Unity 4.3 2D Tutorial: Physics and Screen Sizes](http://www.raywenderlich.com/70344/unity-2d-tutorial-physics-and-screen-sizes) 中看到的那样，当僵尸撞击到敌人以后，Unity 会报告许多个撞击事件。
+
+对于猫咪的撞击事件，当第一个撞击事件正在被处理时，你会禁用猫咪的撞击事件以解决这个问题。为了消除多余的来自敌人的撞击，你得做点天马行空的事情了。
+
+你会在初始撞击之后添加一段免疫撞击的时间。这在许多游戏里面都很常见，当与敌人接触后玩家会损失生命值或是分数，之后玩家的精灵会闪烁 1 至 2 秒，在这段时间内玩家免疫一切伤害。所以，你同样得让你的僵尸闪烁起来！
+
+在 MonoDevelop 中打开 ZombieController.cs 并向类中添加如下变量：
+
+	private bool isInvincible = false;
+	private float timeSpentInvincible;
+
+就像它们名字展现的那样，你会用 isInvincible 来表明什么时候僵尸是无敌的，而且你会用 timeSpentInvincible 来追踪僵尸已经保持无敌状态多长时间了。
+
+在 OnTriggerEnter2D 中找到如下这行代码：
+
+	else if(other.CompareTag("enemy")) {
+
+将其更换为如下代码：
+
+	else if(!isInvincible && other.CompareTag("enemy")) 
+	{
+		isInvincible = true;
+		timeSpentInvincible = 0;
+	}
+
+这个对于 if 判定条件的改动使得僵尸在无敌时会无视敌人的撞击。如果撞击发生在僵尸不是无敌状态的时候，isInvincible 会被设置为 true 并且 timeSpentInvincible 会被重置为 0.
+
+为了让玩家知道自己在那段时间是无敌的，同样也是为了提醒他们僵尸撞到了一个敌人，你得让僵尸精灵闪烁起来。
+
+在 Update 的结尾加上这些代码：
+
+	//1
+	if (isInvincible)
+	{
+		//2
+		timeSpentInvincible += Time.deltaTime;
+ 
+		//3
+		if (timeSpentInvincible < 3f) {
+			float remainder = timeSpentInvincible % .3f;
+			renderer.enabled = remainder > .15f; 
+		}
+		//4
+		else {
+			renderer.enabled = true;
+			isInvincible = false;
+		}
+	}
+
+让我们来看看这些代码做了什么：
+
+1. 第一个 if 在检测这个僵尸现在是否处于无敌状态，因为我们只希望在那个时候执行接下来的逻辑。
+
+2. 如果僵尸处于无敌状态，Time.deltaTime 会被加到 timeSpentInvincible 上以追踪僵尸这次已经持续处于无敌状态的总时间。还记得吗，你在碰撞第一次发生时会将 timeSpentInvincible 重置为0.
+
+3. 接下来的 if 会检测距离上次碰撞是否发生在据现在 3 秒以内。如果是的，僵尸的渲染器会以 timeSpentInvincible 的值为基础被启用或是被禁用。这些数学道理会让僵尸平均每秒闪烁大概 3 次。
+
+4. 最后，如果距离上一次撞击已经超过了 3 秒，僵尸的渲染器会被重新启动且 isInvincible 会被设置为 false。你在此处启用渲染器以保证僵尸不会突然消失。
+
+保存文件并转回 Unity。
+
+运行这个场景，你会看到你的 conga 线能够按照预期正常工作了。
+
+![Alt text](http://cdn1.raywenderlich.com/wp-content/uploads/2015/04/good_enemy_collisions.gif)
+
+好的，conga 线已经做好了，但是玩家该怎么赢，该怎么输呢？所以到现在为止这还不能算是一个游戏（的确是这样的，我觉得，如果无法判定玩家的输赢，这显然不是一个游戏）。是时候解决这个问题了。
+
+##赢和输
 
 
 
