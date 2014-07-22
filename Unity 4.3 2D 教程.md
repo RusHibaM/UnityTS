@@ -851,7 +851,31 @@ congaLine 会为 conga 线中的猫咪储存 Transform 对象。你正在储存 
 		}
 	｝
 	
+这个脚本包含了一个名为 UpdateTargetPosition 的方法。这个方法会在 cat 的父节点中的 CatController 元件（component）上调用一个同名的方法。为了防止重复获取 CatController 元件（component），这个脚本在 Start 中找到这个元件（component）并在 catController 中储存一个指向它的引用（reference）。
 
+保存文件(File\Save)。但是这一次我们不再转回 Unity 而是在 MonoDevelop 中打开 CatController.cs。
+
+你从 CatUpdater 中调用 CatController 的 UpdateTargetPosition，但是 UpdateTargetPosition 却并不是一个公开（public）的方法。如果你现在回到 Unity 的话你会得到如下错误：“因为该方法的保护等级，该方法不可访问”。
+
+因此在CatController.cs中，在 UpdateTargetPosition 的声明的开头出添加一个 public，就像下面这样：
+
+	public void UpdateTargetPosition()
+
+保存文件（File\Save）并转回 Unity。
+
+在继续做接下来的工作以前，你需要核实你的动画事件是否已经配置好了。在项目浏览器中选择 cat 并在 Animation 视图控制条的下拉菜单中选择 CatConga。将鼠标移动到时间轴上的动画事件的标记时，你发现它会显示：UpdateTargetPosition():
+
+![Alt text](http://cdn4.raywenderlich.com/wp-content/uploads/2015/04/fixed_updatetarget.png)
+
+保证在 Hierarchy 中 cat依然处于被选中状态，点击监视器中的 Apply 按钮以保证你刚才添加的脚本会被包含到指定的 Prefab 中。然后在 Hierarchy 中单击鼠标右键并选择弹出的菜单中的 Delete 以从场景中删除 Cat Carrier。
+
+运行这个场景，你会发现僵尸和猫咪最终还是在一起愉快地享受舞蹈party了。
+
+![Alt text](http://cdn2.raywenderlich.com/wp-content/uploads/2015/04/conga_working.gif)
+
+现在僵尸可以往它的 conga 线上招募猫咪了，但是这些老太太却还是没有办法阻止这场让她不爽的不死狂欢。是时候给老太太们放手一搏的机会了！
+
+##处理与敌人的接触
 
 
 
