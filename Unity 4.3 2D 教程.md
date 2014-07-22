@@ -877,12 +877,54 @@ congaLine 会为 conga 线中的猫咪储存 Transform 对象。你正在储存 
 
 ##处理与敌人的接触
 
+在 Zombie Conga 中，玩家需要在撞到一定数目的敌人之前招募到足够数量的猫咪。或者说，这是你完成这个系列教程以后的目标。
 
+为了让建立一条 conga 线变得更加困难。你需要在僵尸碰到敌人后从线上移除一些猫咪。
 
+为了达到这个目的，首先在 MonoDevelop 中打开 CatController.cs 并往这个类中添加如下这个方法：
 
+	public void ExitConga()
+	{
+		Vector3 cameraPos = Camera.main.transform.position;
+		targetPosition = new Vector3(cameraPos.x + Random.Range(-1.5f,1.5f),
+                               cameraPos.y + Random.Range(-1.5f,1.5f),
+                               followTarget.position.z);
+ 
+		Transform cat = transform.GetChild(0);
+	cat.GetComponent<Animator>().SetBool("InConga", false);
+	}
 
+以上这一段代码中最开始的两行给 targetPosition 分配了一个邻近 camera 的位置的随机位置，也就是屏幕中央的位置。这段你已经添加到 Update 中的代码会自动地将猫咪移动到新的位置。
 
+接下来的两行代码将这个猫咪从 Cat Carrier 拿出并将它的 Animator 的 InConga 标记为禁用。还记得么，在 [Unity 4.3 2D Tutorial: Animation Controllers](http://www.raywenderlich.com/66523/unity-2d-tutorial-animation-controllers) 中，为了将动画从 CatConga 状态（state）移除，你需要在 Animator 中将 InConga 设置为 false。这么做会触发猫咪播放 CatDisappear 动画剪辑。
+
+保存文件(File\Save)。
+
+你在 ZombieController 中维护这条 conga 线，所以你需要在那里添加一次对 ExitConga 的访问。现在在 MonoDevelop 中打开 ZombieController.cs。
+
+在这个类中，在 OnTriggerEnter2D 中找到如下这一行：
+
+	Debug.Log ("Pardon me, ma'am.");
+
+用如下这一行代码替换以上内容：
+	
+	for( int i = 0; i < 2 && congaLine.Count > 0; i++ )
+	{
+		int lastIdx = congaLine.Count-1;
+		Transform cat = congaLine[ lastIdx ];
+		congaLine.RemoveAt(lastIdx);
+		cat.parent.GetComponent<CatController>().ExitConga();
+	}
+	
+这个 for 循环看起来有一点奇怪啊，但是它其实做不了我们设想的那么多。如果 conga 线上又猫咪的话，这个循环会移除最后的两只猫咪，如果只有一只猫咪的话，就只移除那一只猫咪。
+
+从 congaLine 中移除了猫咪的 Transform以后，就会调用 ExitConga，就是你刚刚添加到 CatController 的那个方法。
+
+保存文件(File\Save)并转回 Unity。
   
+运行这个场景并为你的 conga 线招募到一些猫咪，然后撞向一个老太太，让我们来看看发生了什么吧！
+
+![Alt text](http://cdn5.raywenderlich.com/wp-content/uploads/2015/04/bad_enemy_collisions.gif)
 
 	
 	
