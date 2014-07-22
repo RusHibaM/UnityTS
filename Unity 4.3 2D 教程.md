@@ -926,7 +926,23 @@ congaLine 会为 conga 线中的猫咪储存 Transform 对象。你正在储存 
 
 ![Alt text](http://cdn5.raywenderlich.com/wp-content/uploads/2015/04/bad_enemy_collisions.gif)
 
-	
+很不幸，当你的僵尸撞到老太太怀里的时候，你的程序因为两个额外的问题崩溃了。
+
+第一个问题是，如果你的 conga 线上有超过两个猫咪，那么当僵尸撞到敌人的时候，你大概已经看到了，所有的猫咪都被移除了。你可以在上面这张动图中看到这个问题。
+
+第二个问题是，你的 Console 中出现了如下这个异常：
+
+![Alt text](http://cdn5.raywenderlich.com/wp-content/uploads/2015/04/anim_event_error_2.png)
+
+没有接收者（receiver），这是什么意思？在解决这个问题以前，你可以试着自己调试一下。你在早些时候已经解决了一个相同的问题。如果你还有问题，请看：
+</br>不能接收你（函数）的调用？
+</br>你有两个解决方案：
+
+
+
+
+
+
 	
 
 
