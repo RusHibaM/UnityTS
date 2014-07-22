@@ -11,7 +11,7 @@
 
 在这个系列教程的第四部分，我们介绍了Unity 2D的物理引擎并且你还学会了一个处理不同屏幕尺寸和不同屏幕比例的方法。
 
-在这个系列教程最后的部分，也就是第五部分，你将能够让你的猫咪在conga线上跳舞，并且让你的玩家能够赢或者输掉游戏。你甚至可以仅仅为了好玩而设置一些音乐或是声音特效。
+在这个系列教程最后的部分，也就是第五部分，你将能够让你的猫咪（译者注：原文中的 cat 在本文中被翻译为猫咪，但是对于 Cat Carrier 这样的关键字译者直接保留了原文，当然如果 cat 本身为关键字或是变量名等类似情况，译者也将保留原文中的 cat 而不进行翻译）在conga线上跳舞，并且让你的玩家能够赢或者输掉游戏。你甚至可以仅仅为了好玩而设置一些音乐或是声音特效。
 
 上一个教程是这个系列教程中最长的一篇，但是看起来我们一次性发布整篇超长教程会比让读者花上额外的一天来等待教程的另外一半更加明智。
 
@@ -28,9 +28,15 @@ Zombie Conga 是一个横向卷轴（side-scrolling）游戏，但是到目前�
 
 为了将整个场景滚动到左侧，你可以在整个游戏世界的范围内将摄影机（camera）移动到右边。通过这个方法，沙滩，包括沙滩上的猫咪、僵尸、在沙滩上散步的老妇人，都会自然地随着场景的滚动而滚动所以你并不需要手动设置他们的位置。
 
-在 Hierarchy 中选择主摄影机（Main Camera）。添加一个新的叫做 CameraController 的C#脚本。你已经通过这一点在这个教程系列中创建了好几个脚本了，所以你可以自己尝试一下。如果你需要复习一下，你可以查看一下如下链接：
-</br> [Solution Inside: Need help adding a new script?](http://www.raywenderlich.com/71029/unity-4-3-2d-tutorial-scrolling-scenes-and-sounds)
-</br>打开 MonoDevelop 中的 CameraController.cs 并且添加如下的实例变量：
+在 Hierarchy 中选择主摄影机（Main Camera）。添加一个新的叫做 CameraController 的C#脚本。你已经通过这一点在这个教程系列中创建了好几个脚本了，所以你可以自己尝试一下。如果你需要复习一下，请看：
+</br>想知道怎么添加一个脚本吗？
+</br>事实上你有很多方法可以创建脚本并将它们添加到主摄影机（Main Camera）。这里就只介绍一个了：
+
+1. 点击监视器中的 Add Component，并在出现的菜单中选择 New Script。
+
+2. 输入名字：CameraController 并选择 CSharp 作为脚本语言，然后点击 Create and Add 就大功告成了。
+
+在 MonoDevelop 中打开 CameraController.cs 并且添加如下的实例变量：
 
 	public float speed = 1f;
 	private Vector3 newPosition;
@@ -61,7 +67,7 @@ Zombie Conga 是一个横向卷轴（side-scrolling）游戏，但是到目前�
 你需要像你处理敌人那样处理你的背景。就是说，当设置的敌人走到屏幕的边界外面以后，你会改变他的位置让他能偶从屏幕的另外一端重新进入。
 
 添加一个新的叫做 BackgroundRepeater 的C#脚本到背景（background）中。你已经通过这一点在这个教程系列中创建了好几个脚本了，所以你可以自己尝试一下。如果你需要复习一下，请回顾以下以前的教程并找到相应的方法。
-</br>打开 MonoDevelop 中的 BackgroundRepeater.cs 并且添加如下的实例变量：
+</br>在 MonoDevelop 中打开 BackgroundRepeater.cs 并且添加如下的实例变量：
 
 	private Transform cameraTransform;
 	private float spriteWidth;
@@ -143,7 +149,7 @@ Zombie Conga 是一个横向卷轴（side-scrolling）游戏，但是到目前�
 
 创建一个叫做 KittyCreator 的 C# 脚本并附属在刚才创建的 Kitten Factory 下。接下来就没有创建新脚本的提示了，你应该能够自己应付了。（但是如果你实在自己应付不了，就去查看这个系列教程之前的部分吧）
 
-打开 MonoDevelop 中的 KittyCreator.cs 并将其中的内容替换为如下代码：
+在 MonoDevelop 中打开KittyCreator.cs 并将其中的内容替换为如下代码：
 
 	using UnityEngine;
  
@@ -183,13 +189,13 @@ Zombie Conga 是一个横向卷轴（side-scrolling）游戏，但是到目前�
 这样你的 Kitten Factory 就可以按照规划工作了，你需要让它产生（原文使用spit out）一些猫咪。为了达到这一目的，你需要使用Unity 最强大的特性之一：Prefabs。
 
 ##Prefabs
-Prefabs 现在在你的 Project 中，而不是在你场景的 Hierarchy 中。你可以将 Prefabs 用作在你的场景中创建对象的模板。
+Prefabs 现在在你的项目中，而不是在你场景的 Hierarchy 中。你可以将 Prefabs 用作在你的场景中创建对象的模板。
 
 但是，这些实例并不仅仅是原始 Prefabs 的副本。取而代之的是，Prefab 定义了一个对象的默认值，接下来你可以自由地修改你的场景中的特定实例，而不会影响其他同样通过这个 Prefab 创建的对象。
 
 在 Zombie Conga 中，你希望创建一个猫咪 Prefab 并且让 Kitten Factory 在场景中的不同位置创建该 Prefab 的实例。但是在你的场景中不是已经有了一个猫咪对象了吗？并且你不是已经通过你自己设置好的所有的动画，物理效果和脚本配置好了吗？可以确定的是，如果制作一个 Prefab 的时候你必须重做这些步骤，这一定很恼人吧。幸运的是，你的确不必。
 
-为了将它变为一个 Prefab，你只需要简单地将 cat 从 Hierarchy 中拖动到 Project 浏览器中。你可以在 Project 浏览器中看到一个新建的 cat Prefab 对象，但是你同样需要注意的是，单词 cat 在 Hierarchy 中变成了蓝色，就像下图所示：
+为了将它变为一个 Prefab，你只需要简单地将 cat 从 Hierarchy 中拖动到项目浏览器（译者注：原文为 Project browser，在本文中统一被翻译为“项目浏览器”）中。你可以在项目浏览器中看到一个新建的 cat Prefab 对象，但是你同样需要注意的是，单词 cat 在 Hierarchy 中变成了蓝色，就像下图所示：
 
 ![Alt text](http://cdn5.raywenderlich.com/wp-content/uploads/2015/04/create_cat_prefab.gif) 
 
@@ -199,13 +205,13 @@ Prefabs 现在在你的 Project 中，而不是在你场景的 Hierarchy 中。�
 
 这个按钮在编辑 Prefabs 的实例时非常有用。它们让你可以完成如下工作：
 
-1. 选择：这个按钮在 Project 浏览器中选择被用来创建实例的 Prefab 对象。
+1. 选择：这个按钮在项目浏览器中选择被用来创建实例的 Prefab 对象。
 
 2. 还原：这个按钮会将任何你对实例做的本地修改恢复到 Prefab 中的默认值。
 
 3. 申请：这个按钮会获取所有你在该实例上所做的本地修改并将这些值设置到原来的 Prefab 上，将这些值设置为所有通过这个 Prefab 创建的实例的默认值。任何已经存在的由该 Prefab 得到的，还没有通过进行本地重写来设置这些值的实例会自动地把它们的默认值修改为最新设置的默认值。
 
-重要提示：点击 申请 按钮会影响所有共享这个对象的 Prefab 的 GameObject，不仅仅是目前这个场景中相关的 GameObject会受影响，整个project里面所有场景中相关的 GameObject 都会受到影响。
+重要提示：点击 申请 按钮会影响所有共享这个对象的 Prefab 的 GameObject，不仅仅是目前这个场景中相关的 GameObject会受影响，整个项目里面所有场景中相关的 GameObject 都会受到影响。
 
 现在你需要停止 Kitten Factory 对于你的 Console 的文字污染，你现在该让它用猫咪污染你的沙滩了！
 
@@ -272,7 +278,7 @@ Kitten Factory 现在在监视器（Inspector）中看来是这个样子的：
 
 这样不行！如果你的游戏持续足够长的时间，这个排序逻辑会让游戏因为意外停止而崩溃。当你的猫咪试图关闭（go off）你的屏幕的时候，你应该将它们从屏幕中除去。
 
-打开 MonoDevelop 中的 CatController.cs 并将如下方法添加到 CatController 中：
+在 MonoDevelop 中打开 CatController.cs 并将如下方法添加到 CatController 中：
 
 	void OnBecameInvisible() {
 	Destroy( gameObject ); 
@@ -329,7 +335,7 @@ Unity 允许你向任何 GameObject 分配一个字符串，这个字符串被�
 注：除了你定义的标签（tag），Unity 会保持至少一个额外的标记了的输入框，所以无论什么时候，只要你在最后一个可输入的输入框输入了信息，它最会添加一个新的输入框。就算你改变输入框的 Size 的值来匹配你实际有的标签的数目，Unity 也会自动将这个数值改回为刚好比你现有的标签的数目大一个的值。
 </br>译者注：原文使用的 field 来表述可以进行输入的区域，所以我在这里译为“输入框”。
 
-在 Project 浏览器中选择 cat 并将监视器（Inspector）中的标记为 Tag 的组合框中选择 cat，如下图所示：
+在项目浏览器中选择 cat 并将监视器（Inspector）中的标记为 Tag 的组合框中选择 cat，如下图所示：
 
 ![Alt text](http://cdn1.raywenderlich.com/wp-content/uploads/2015/04/setting_cat_tag.gif)
 
@@ -349,7 +355,7 @@ Unity 允许你向任何 GameObject 分配一个字符串，这个字符串被�
 
 ![Alt text](http://cdn3.raywenderlich.com/wp-content/uploads/2015/04/enemy_tag_set.png)
 
-嗯，现在你的对象已经被打上标签了，你可以在你的脚本中轻松辨识它们了。该怎么样呢，打开 MonoDevelop 中的 ZombieController.cs 并用如下代码将 OnTriggerEnter2D 中的内容替换掉。
+嗯，现在你的对象已经被打上标签了，你可以在你的脚本中轻松辨识它们了。该怎么样呢，在 MonoDevelop 中打开 ZombieController.cs 并用如下代码将 OnTriggerEnter2D 中的内容替换掉。
 
 	if(other.CompareTag("cat")) 
 	{
@@ -390,7 +396,7 @@ Unity 允许你向任何 GameObject 分配一个字符串，这个字符串被�
 
 第一行代码禁用了猫咪的碰撞事件。在僵尸撞到一只猫咪的时候，这可以避免 Unity 发送超过一个碰撞事件。（之后为了处理这个问题，你将用一个另外的办法来处理僵尸与敌人（enemy）的碰撞）
 
-第二行代码在猫咪的动画元件（Animator Component）将 InConga 设置为 true。通过这个做法，你触发了一个状态转换，将 CatWiggle 动画剪辑（Animation Clip）转换到 CatZombify 动画剪辑（Animation Clip）。你将通过本系列第三部分提到的动画窗口（Animator window）来设置这个转换。
+第二行代码在猫咪的动画元件（Animator Component）将 InConga 设置为 true。通过这个做法，你触发了一个状态转换，将 CatWiggle 的动画剪辑（译者注：原文为Animation Clip，在本文中被统一翻译为动画剪辑）转换为 CatZombify 的动画剪辑。你将通过本系列第三部分提到的动画制作者窗口（Animator window）来设置这个转换。
 
 顺便提一句，你必须注意到你将 JoinConga 声明为公开（public）。这样你就可以在其他脚本中调用它，这也正是你正在做的。
 
@@ -442,7 +448,7 @@ congaLine 会为 conga 线中的猫咪储存 Transform 对象。你正在储存 
 
 如果你打算现在运行这个场景，你不会看到任何的变化。因为你只是在维护一个满是猫咪的 list，却没有写任何代码让猫咪从加入 conga 线的初始位置起一直跟着僵尸移动。所以当僵尸领头的 conga 线移动的时候，这看起来一点也不欢乐。
 
-为了解决这个问题，打开 MonoDevelop 中的 CatController.cs。
+为了解决这个问题，在 MonoDevelop 中打开 CatController.cs。
 
 移动猫咪的代码和你在本系列的第一部分中写的移动僵尸的代码是相似的。开始吧，将如下的实例变量加入到 CatController：
 
@@ -613,11 +619,11 @@ congaLine 会为 conga 线中的猫咪储存 Transform 对象。你正在储存 
 
 保存文件并转回 Unity。
 
-回顾本系列的第三部分可以发现动画剪辑器能够触发事件。你会在 CatConga 的第一桢期间添加一个调用 UpdateTargetPosition 的事件，来让猫咪可以在每一跳之前计算它们的下一个目标位置。
+回顾本系列的第三部分可以发现动画剪辑能够触发事件。你会在 CatConga 的第一桢期间添加一个调用 UpdateTargetPosition 的事件，来让猫咪可以在每一跳之前计算它们的下一个目标位置。
 
 但是通过回顾之前的部分，你会发现在你的项目中，你只能在你的场景中为一个 GameObject 编辑动画而不能为一个 Prefab 编辑动画。所以为了创建一个动画时间，你需要先在场景中暂时添加一只猫咪。
 
-从项目（Project）浏览器中将 cat Prefab 拖到 Hierarchy 中。
+从项目浏览器中将 cat Prefab 拖到 Hierarchy 中。
 
 在 Hierarchy 中选择 cat 然后转回到 Animation 视图（Window\Animation）。
 
@@ -669,7 +675,7 @@ congaLine 会为 conga 线中的猫咪储存 Transform 对象。你正在储存 
 
 为什么被设置了动画的 GameObject 不肯被创造它们的脚本改变呢？这是一个普遍的问题，所以花些时间找到一个好的解决方案是很有价值的。
 
-首先，这是怎么回事呢？当猫咪沿着这条 conga 线跳动的时候，它会一直播放 CatConga 动画剪辑。就像你在如下图像中看到的那样，CatConga会在猫咪的 Transform 中调整（adjust） Scale 属性：
+首先，这是怎么回事呢？当猫咪沿着这条 conga 线跳动的时候，它会一直播放 CatConga 剪辑。就像你在如下图像中看到的那样，CatConga会在猫咪的 Transform 中调整（adjust） Scale 属性：
 
 ![Alt text](http://cdn3.raywenderlich.com/wp-content/uploads/2015/04/catconga_scale.png)
 
@@ -691,7 +697,7 @@ congaLine 会为 conga 线中的猫咪储存 Transform 对象。你正在储存 
 
 ![Alt text](http://cdn4.raywenderlich.com/wp-content/uploads/2015/04/cat_in_carrier.png)
 
-当你生成敌人并指向（point to）主摄影机（Main Camera），就像在[ Unity 4.3 2D Tutorial: Physics and Screen Sizes](http://www.raywenderlich.com/70344/unity-2d-tutorial-physics-and-screen-sizes)里，你学会了对子结点的位置定义一个相对于父节点的偏移量。
+当你生成敌人并指向（point to）主摄影机（Main Camera）时——就像在[ Unity 4.3 2D Tutorial: Physics and Screen Sizes](http://www.raywenderlich.com/70344/unity-2d-tutorial-physics-and-screen-sizes)里做到的那样——你学会了对子结点的位置定义一个相对于父节点的偏移量。
 
 对于猫咪，你希望子结点在父节点的中心，所以如果将父节点设置在(x,y,z)位置，从本质上来说就是将子结点设置在(x,y,z)位置。
 
@@ -715,7 +721,7 @@ congaLine 会为 conga 线中的猫咪储存 Transform 对象。你正在储存 
 
 ![Alt text](http://cdn5.raywenderlich.com/wp-content/uploads/2015/04/add_script.gif)
 
-现在将 Cat Carrier 从 Hierarchy 中拖动到项目（Project）浏览器中使得它成为一个 Prefab。就像你创建猫咪 Prefab 那样，Hierarchy 中的 Cat Carrier 的名字变成了蓝色，这说明现在他已经是某个 Prefab 的实例了。如下图所示：
+现在将 Cat Carrier 从 Hierarchy 中拖动到项目浏览器中使得它成为一个 Prefab。就像你创建猫咪 Prefab 那样，Hierarchy 中的 Cat Carrier 的名字变成了蓝色，这说明现在他已经是某个 Prefab 的实例了。如下图所示：
 
 ![Alt text](http://cdn3.raywenderlich.com/wp-content/uploads/2015/04/cat_carrier_in_hierarchy.png)
 
@@ -723,7 +729,7 @@ congaLine 会为 conga 线中的猫咪储存 Transform 对象。你正在储存 
 
 ![Alt text](http://cdn3.raywenderlich.com/wp-content/uploads/2015/04/no_cat_carrier_in_hierarchy.png)
 
-在项目（Project）浏览器中，你现在有了一个名为 cat 的 Prefab和一个名为 Cat Carrier 的 Prefab，而这个 Prefab 自身包含了一个名为 cat 的Prefab，如下图所示：
+在项目浏览器中，你现在有了一个名为 cat 的 Prefab和一个名为 Cat Carrier 的 Prefab，而这个 Prefab 自身包含了一个名为 cat 的Prefab，如下图所示：
 
 ![Alt text](http://cdn3.raywenderlich.com/wp-content/uploads/2015/04/prefab_assets.png)
 
@@ -737,8 +743,12 @@ congaLine 会为 conga 线中的猫咪储存 Transform 对象。你正在储存 
 
 那是因为 Cat Prefab 被设置为了一个早已被你删除的元素（asset）。
 
-将 Kitty Creator (Script) 元件（component）的 Cat Prefab 区域从 cat 修改为 Cat Carrier。如果你不记得怎么做了，你可以查看下面这篇攻略：</br>
-[Solution Inside: Need help setting the Cat Prefab field?](http://www.raywenderlich.com/71029/unity-4-3-2d-tutorial-scrolling-scenes-and-sounds)
+将 Kitty Creator (Script) 元件（component）的 Cat Prefab 区域从 cat 修改为 Cat Carrier。如果你不记得怎么做了，请看下面：
+</br>按照下面这么做，就可以将 Cat Carrier 分配到 Cat Prefab：
+
+1. 在 Hierarchy 中选中 Kitten Factory，点击监视器中小小的 circle/target 图标，这个图标应该是在 Kitty Creator (Script)  元件的 Cat Prefab 区域的右侧。
+
+2. 在出现的 Select GameObject 对话框中，选择 Assets 选项卡里面的 Cat Carrier。
 
 运行这个场景。这下你会发现当僵尸撞到猫咪时，Console 会出现与下图相似的异常，如下图所示：
 
@@ -768,9 +778,79 @@ congaLine 会为 conga 线中的猫咪储存 Transform 对象。你正在储存 
 
 ![Alt text](http://cdn2.raywenderlich.com/wp-content/uploads/2015/04/error_in_mono_2b.png)
 
+在 JoinConga 中，你试图访问对象的 Animator 元件（component）。这已经不管用了，因为你已经将脚本移动到了 Cat Carrier 上而 Animator 却依然附属在 cat中。
 
+因为你并不想移动 Animator，所以你得修改你的代码了。
 
+在 CatController.cs 中，在 JoinConga 中找到如下这两行代码：
 
+	collider2D.enabled = false;
+	GetComponent<Animator>().SetBool( "InConga", true );
+
+将这两行代码替换为如下代码：
+
+	Transform cat = transform.GetChild(0);
+	cat.collider2D.enabled = false;
+	cat.GetComponent<Animator>().SetBool( "InConga", true );
+
+这段代码会使用 Cat Carrier 的 Transform 来找到它的第一个子结点——索引（index）为1.你明白 Cat Carrier 只有一个子结点，就是 cat。这段代码会访问 cat 的 Collider2D 和 Animator 元件，就像你以前所做的那样。
+
+注：我不喜欢这段代码因为它是建立在你已经知道 Cat Carrier 的第一个子结点是 cat 的基础上的。如果你想要你的代码更加牢靠，你可以使用以下这种方式来找到你需要的元件（component）而不是直接使用 GetChild(0); 这样的语句：
+	
+	Transform cat = transform.FindChild("cat");
+
+但是这种解决方案又是建立在你知道你所需要的子结点的名字的基础上的。这种方法的确要好一点，但是这并不是最理想的。
+
+最好的解决方案或许是完全禁止在运行时寻找对象。为了达到这个目的，你可以在 Unity 编辑器中向 CatController 添加一个 Transform 变量并将 cat Prefab 分配给它。这个方法真不赖！
+
+保存文件(File\Save)并转回Untiy。
+
+运行这个场景，但是……当僵尸撞到猫咪的时候……你发现了这个错误：
+
+![Alt text](http://cdn4.raywenderlich.com/wp-content/uploads/2015/04/anim_event_exception.png)
+
+这个问题发生在你的动画剪辑 —— CatConga 中。在早些时候你在第 0 帧添加了一个调用 cat 的 UpdateTargetPosition 的事件。但是你已经把 CatController.cs 移动到不同的对象上了，所以说这个错误再告诉你：你正在目标对象上调用一个根本不存在的方法。
+
+在项目浏览器中选择 Cat Carrier 然后打开 Animation 视图（Window\Animation）。这是什么？这里根本没有任何动画剪辑啊！
+
+![Alt text](http://cdn4.raywenderlich.com/wp-content/uploads/2015/04/empty_animation_window.png)
+
+这实际上是有道理的。还记得吗，你曾经向 cat 添加动画剪辑，但你并没有向 Cat Carrier 添加过任何动画剪辑啊！实际上，你添加 Cat Carrier 的根本原因是 Unity 的动画系统在干涉你的 GameObject 的 Transform。
+
+展开项目浏览器中 Cat Carrier 并选择 cat，然后在 Animation 的视图控制条中的下拉菜单中选择 CatConga。把鼠标移动到时间轴上的动画事件的标记上，你会发现这里有一个错误：
+
+![Alt text](http://cdn4.raywenderlich.com/wp-content/uploads/2015/04/error_in_anim_event.png)
+
+双击这个动画事件的标记……但是……什么都没有发生。来一发突击小测验！请问，这到底是为什么呢？答案如下：</br>
+	
+	还记得吗，你可以修改一个 Prefab 上的动画剪辑。双击这个标记本应该打开 Edit Animation Event 对话框，但是如果你不能编辑这个对象你自然是无法访问这个对话框的喽。
+	为了解决这个问题，将 Cat Carrier 从项目浏览器中拖动到 Hierarchy 中。然后在 Hierarchy 选中它的子结点 —— cat。
+
+当你更正这个错误以后，再次双击那个动画事件的标记，你会看到下面这个对话框，它指出 UpdateTargetPosition 不被支持：
+
+![Alt text](http://cdn2.raywenderlich.com/wp-content/uploads/2015/04/targetpos_not_supported.png)
+
+本系列教程的第四部分提及了这个问题。动画事件只能访问那些附属在与这段剪辑相关的对象上的脚本中的方法。也就是说你会需要往猫咪上添加一个新的脚本。
+
+在 Hierarchy 中选择猫咪并添加一个新的名字为 CatUpdater.cs 的脚本。
+
+在 MonoDevelop 中打开 CatUpdater.cs 并将里面的内容更换为如下内容：
+
+	using UnityEngine;
+	public class CatUpdater : MonoBehaviour {
+		private CatController catController;
+		private CatController catController;
+		// Use this for initialization
+		void Start () {
+    		catController = transform.parent.GetComponent<CatController>();  
+		}
+		
+		void UpdateTargetPosition()
+		{
+    		catController.UpdateTargetPosition();
+		}
+	｝
+	
 
 
 
