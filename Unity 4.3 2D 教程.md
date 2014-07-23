@@ -1338,10 +1338,43 @@ congaLine 会为 conga 线中的猫咪储存 Transform 对象。你正在储存 
 
 ![Alt text](http://cdn4.raywenderlich.com/wp-content/uploads/2015/04/zombie_sounds_empty.png)
 
+将 Enemy Contact Sound 设置为 hitEnemy 音效。然后将 Cat Contact Sound 设置为 hitCat 音效。如果你不记得怎么设置这些音频剪辑，你可以回顾一下稍早以前你在摄影机的 Audio Source 中设置  congaMusic 的过程。
 
+运行这个场景并让僵尸撞到一只猫咪。啊！每当僵尸撞到什么东西，Unity 都会输出如下这个异常，告诉你有一个元件（component）没有找到。
 
+![Alt text](http://cdn5.raywenderlich.com/wp-content/uploads/2014/07/missing_audio_exception-700x29.png)
 
+这个异常指出了问题并提供了一个有帮助的解决方案。ZombieController 尝试着通过它的 audio 域来访问僵尸的 AudioSource，但是僵尸目前还没有一个 Audio Source。
 
+现在，通过向 zombie 添加一个 Audio Source 元件（component）来修成这个异常。在 Hierarchy 中选中 zombie 并在 Unity 菜单中选择 Component\Audio\Audio Source。
+
+Audio Source 的默认设置是好的。你不用在这上面设置一个音频剪辑因为 ZombieController 将在播放这些剪辑的时候提供它们。
+
+再一次运行这个场景，感受真实音效技术给沙滩带来的活力吧！
+
+![Alt text](http://cdn3.raywenderlich.com/wp-content/uploads/2015/04/meow2.png)
+
+你现在自己可以给 WinScene 和 LoseScene 添加一些背景音乐了。让 WinScene 播放 winMusic 且让 LoseScene 播放 loseMusic。对于这两种情形，让音效在场景开始后尽可能早地播放并让它不要循环。
+
+该怎么做呢（仅仅以 WinScene 为例）：打开 WinScene。向 Main Camera 添加一个 Audio Source ，将这个 Audio Source 元件的 Audio Clip 设置为 winMusic。另外要保证 Play On Awake 被选中，而 Loop 没有被选中。
+
+就是这样！为了完整地体验 Zombie Conga，运行 LaunchScene 然后你就可以享受游戏开始时的美妙音乐了。如果你获胜了，你会得到来自 WinScene 得搞笑图片与音乐作为你的奖赏。但是如果你输了，你会看到一个悲伤的僵尸正在聆听悲伤的调调。享受游戏吧！
+
+谁是真正的大赢家呢？当然是你喽！
+
+![Alt text](http://cdn5.raywenderlich.com/wp-content/uploads/2015/04/ZombieConga-YouWin.png)
+
+##接下来我该何去何从？
+
+如果你坚持看完了整个系列攻略，恭喜你！你已经在 Unity 中制作了一个属于自己的游戏，并且通过这个方式你学到了很多 Unity 的全新的 2D 特性。
+
+你可以在[这里](http://cdn4.raywenderlich.com/wp-content/uploads/2015/04/ZombieConga-Part5-Complete.zip)下载整个 Zombie Conga 项目。
+
+想要学到更多如何使用 Unity, 2D 或者其他东西的技巧，我建议你去看一下 Unity 的 [Live Training Archive](http://unity3d.com/learn/tutorials/modules/live-training-archive)。当然，也应该看一看 Unity 的[文档](http://unity3d.com/learn/documentation)，就是随着 Unity 4.5 的发布而更新的那个版本的文档。
+
+我希望你能够喜欢这个系列的教程。按照往常那样，如果你有反馈或是有问题需要询问，请在下面的交流板块留言。或者直接在 [Twitter](Twitter) 上联络我。（译者注：可以前往[原文](http://www.raywenderlich.com/71029/unity-4-3-2d-tutorial-scrolling-scenes-and-sounds)，在下面留言或者提问）
+
+现在去玩 Zombie Conga 吧。玩够了以后，尝试着做一个自己的游戏吧！
 
 
 
