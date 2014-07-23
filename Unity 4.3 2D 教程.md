@@ -1029,8 +1029,59 @@ congaLine 会为 conga 线中的猫咪储存 Transform 对象。你正在储存 
 
 ##赢和输
 
+当 Zombie Conga 玩家建立了一条足够长的 conga 线的时候，他这把游戏就算赢了。你在 ZombieController.cs 中维护 conga 线，所以现在在 MonoDevelop 中打开这个文件吧。
 
+将以下代码加入到 OnTriggerEnter2D，具体的位置为：处理猫咪的撞击事件的那一块代码里的，将 other.transform 加到 congaLine 的那一行的后面：
 
+	if (congaLine.Count >= 5) {
+		Debug.Log("You won!");
+		Application.LoadLevel("CongaScene");
+	}
+
+这段代码会检测 conga 线上是否至少包含 5 只猫咪。如果是的，会有一条胜利信息被记录到 Console  中并且会通过 Application.LoadLevel 重新加载当前的场景，也就是 CongaScene。因为这个方法的名字中包含 “level” 字样，LoadLevel 实际上会加载 Unity 场景。通过查看 [Application](http://docs.unity3d.com/Documentation/ScriptReference/Application.html) 类的文档，你会找到更多相关信息。
+
+不要担心，我们在重新加载 CongaScene 仅仅是为了测试。你稍后会用专门的胜利场景来替换这个场景。
+
+注：在真正的游戏中，玩家想要获胜的话，可能需要在 conga 线上收集超过 5 只猫咪。但是测试获胜状态会花费很多时间（收集到足够多的猫咪），并且你其实是有大事要做的忙人。你可以自由地修改这个 if 语句中的 “5”。
+
+保存文件(File\Save)并转回 Unity。
+
+运行这个场景。当你收集到五只猫咪的时候，你会在 Console 中看到 “You won!”并且场景会被重置到起始状态。
+
+![Alt text](http://cdn1.raywenderlich.com/wp-content/uploads/2015/04/win_reload.gif)
+
+![Alt text](http://cdn4.raywenderlich.com/wp-content/uploads/2015/04/you_won_log.png)
+
+仅仅有获胜还是不够的，所以我们来考虑如何让玩家输掉游戏吧。
+
+回到 MonoDevelop 中的 ZombieController.cs 并将如下变量添加到类中：
+
+	private int lives = 3;
+
+这个变量用来追踪僵尸的生命值还剩多少。当这个变量变成 0 的时候，游戏结束。
+
+将如下代码添加到 OnTriggerEnter2D 中的控制僵尸与敌人的撞击事件的代码块的结尾处： 
+
+	if (--lives <= 0) {
+		Debug.Log("You lost!");
+		Application.LoadLevel("CongaScene");
+	}
+
+这段代码会从 lives 中减去 1 然后检测僵尸的生命值是否为非 0。如果不是，就会在 Console 记录一条代表输掉游戏的记录并调用 Application.LoadLevel 重新加载当前的场景。这和之前的情况是一样的，这仅仅是为了测试，你稍微会用一个专门的游戏结束场景替换这个场景。
+
+保存文件(File\Save)并转回 Unity。
+
+运行场景并用僵尸撞击 3 个老太太。算了，别这么做。乖乖地玩游戏，并在游戏中让 3 个老太太撞到你的僵尸。那么你会在 Console 看到 “You lost!”并发现场景被重置到了初始状态。
+
+![Alt text](http://cdn5.raywenderlich.com/wp-content/uploads/2015/04/lose_reload.gif)
+
+![Alt text](http://cdn4.raywenderlich.com/wp-content/uploads/2015/04/you_lose_log.png)
+
+就是这样！就算这个 Zombie Conga 看起来有些粗糙，但是它已经可以正常运行了！接下来你会做一些收尾的工作，包括额外的场景（输、赢的场景等），一些背景音乐和一些音效。
+
+##额外的场景
+
+为了完成这个游戏，你还需要在 Zombie Conga 中添加如下三个场景：
 
 
 
