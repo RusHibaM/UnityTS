@@ -1251,6 +1251,103 @@ congaLine 会为 conga 线中的猫咪储存 Transform 对象。你正在储存 
 
 ##音频
 
+找到你刚才下载的资源文件中的名叫 Audio 的文件夹。这个文件夹包含了 Vinnie Prabhu 为我们的书籍 —— [iOS Games by Tutorials](http://www.raywenderlich.com/store/ios-games-by-tutorials) 所制作的音乐和音效。
+
+将五段音乐或者音效直接拖动到项目浏览器中。
+
+打开项目浏览器中的 Audio 文件夹来显示你新的音乐片段，如下图所示：
+
+![Alt text](http://cdn2.raywenderlich.com/wp-content/uploads/2015/04/audio_files.png)
+
+选中项目浏览器中的 congaMusic 以在监视器中显示声音的 Import Settings，如下图所示：
+
+![Alt text](http://cdn2.raywenderlich.com/wp-content/uploads/2015/04/congaMusic_inspector.png)
+
+我们可以注意到上图中 Audio Format 处于被禁用状态。这是因为 Unity 不允许你在引入压缩音效剪辑时选择格式。
+
+你能够向 Unity 引入 .aif, .wav, .mp3 和 .ogg 文件。至于 .aif 和 .wav 文件，Unity 会让你选择是直接使用原来的格式还是将原来的文件压缩到一个符合 build 要求的适当的格式。但是， Unity 会自动地对 .mp3 和 .ogg 文件进行重编码，如果这么做有利于更好地达到目的的话。比如说，.ogg 文件会被重编码为 .mp3 文件如果目标平台是 iOS。
+
+如果 Unity 需要将声音文件从一种压缩格式转换到另一种，音质会收到一些影响。就因为这样，Unity 的文档强烈建议你使用类似 .aif 和 .wav 这样的无损格式引入声音文件并允许 Unity 在必要时将他们编码为 .mp3 或是 .ogg 文件。你正在使用一个 .mp3 格式的文件，因为我没有无损的版本并且这个听上去已经不错了。
+
+注：Unity 同样会支持 [tracker modules](http://docs.unity3d.com/Manual/TrackerModules.html)，这和 MIDI 文件相似而且更好，因为他们包含了乐器的声音样板。如果你的游戏有特别的音频需求，你可以试着使用 tracker modules。
+
+你应该保留你所引入的五段音频文件的绝大多数默认参数。但是你不会在 3d 空间播放你的音效，所以取消 3D Sound 选择，如下图所示：
+
+![Alt text](http://cdn4.raywenderlich.com/wp-content/uploads/2015/04/uncheck_3d_sound.png)
+
+再点击 Apply 完成设置。
+
+当你点击 Apply 的时候，Unity 会再次引入这些声音剪辑。如果这需要花上一些时间，你会看到一个显示编码进度的对话框，如下图所示：
+
+![Alt text](http://cdn3.raywenderlich.com/wp-content/uploads/2015/04/asset_conversion_progress.png)
+
+注：在 2D 游戏中，绝大多数情况下你不会需要 3D 声音剪辑。3D 声音剪辑被用来产生特别的声音效果，这些效果是基于听者和发声源的相对位置关系和听者的相对运动的。比如说，当你靠近发声源的时候声音会逐渐变大；一辆汽车的相对于听者的移动会产生多普勒效应。玩家会觉得原本在自己身后的声音在空间中的位置发生了改动，就在他们转向它的时候。
+
+禁用余下四个声音文件(hitCat, hitEnemy, loseMusic 和 winMusic)的 3D sound.
+
+当你成功引入你的声音文件以后，你就可以首先将声音添加到 CongaScene 了。如果有必要，就保存当前的场景并打开 CongaScene。
+
+为了在 Unity 中播放声音，你需要向一个 GameObject 里添加一个音效资源元件（Audio Source component）。你可以向任何 GameObject 添加这种元件，但是你得使用这个摄影机来播放 Zombie Conga 的背景音乐。
+
+在 Hierarchy 中选择 Main Camera。通过选择 Unity 菜单中的 Component\Audio\Audio Source 添加一个音频源。监视器中现在显示的就是 Audio Source 设置，如下图所示：
+
+![Alt text](http://cdn5.raywenderlich.com/wp-content/uploads/2015/04/audio_source_in_inspector.png)
+
+就像你之前设置域里面的 asset那样，点击 Audio Source 元件的 Audio Clip 区域的右边的小小的 circle/target 图标，以打开 Select AudioClip 对话框。选择 Assets 选项卡里面的 congaMusic，如下图所示：
+
+![Alt text](http://cdn3.raywenderlich.com/wp-content/uploads/2015/04/select_audioclip.png)
+
+在 Audio Source 元件中，Play On Awake 已经被选中。这将指示 Unity 在场景加载的时候就立刻开始播放这段音频剪辑。
+
+这段背景音乐应该一直播放，直到玩家获胜或是输掉游戏，所以勾选标记有 Loop 选择框，如下图所示：
+
+![Alt text](http://cdn5.raywenderlich.com/wp-content/uploads/2015/04/loop_audio.png)
+
+这将指示 Unity 在音频剪辑播放到结尾时能够重新开始播放该剪辑。
+
+运行场景你会听见为一直猫咪们伴舞的旋律。
+
+![Alt text](http://cdn5.raywenderlich.com/wp-content/uploads/2015/04/whistling_to_music.png)
+
+在你担心你的获胜和失败场景的时候，你一定会游戏中的撞击音效而热血沸腾。
+
+在 MonoDevelop 中打开 ZombieController.cs 并向 ZombieController 加入以下变量：
+
+	public AudioClip enemyContactSound;
+	public AudioClip catContactSound;
+
+这些代码储存着你将在特定的撞击发生时播放的 AudioClip。稍后你会在编辑器中分配它们。
+
+在 OnTriggerEnter2D 中，将如下内容添加到当僵尸撞到猫咪时执行的代码块中：
+
+	audio.PlayOneShot(catContactSound);
+
+通过在 audio 上调用 PlayOneShot 来播放储存在 catContactSound 中的音频剪辑。但是 audio 是从哪儿来的呢？
+
+每一个 MonoBehaviour 能够访问特定的 built-in 域，就比如说你在这个系列教程的其他地方访问过的 transform 域。如果一个 GameObject 包含一个 AudioSource 元件，你能够通过 built-in 的   audio 域访问它。
+
+现在将如下着一行添加到 OnTriggerEnter2D 中，记得添加到当僵尸撞击到敌人时将会运行的那个代码块中：
+
+	audio.PlayOneShot(enemyContactSound);
+
+这段代码将在僵尸撞击到敌人时播放 enemyContactSound 音频剪辑。
+
+保存文件(File\Save)并转回 Unity。
+
+在 Hierarchy 中选择 zombie。你可以在监视器中看到，现在 Zombie Controller (Script) 元件有了两个新的区域，如下图红色框所示：
+
+![Alt text](http://cdn4.raywenderlich.com/wp-content/uploads/2015/04/zombie_sounds_empty.png)
+
+
+
+
+
+
+
+
+
+
+
 
 
 
