@@ -5,7 +5,7 @@
 
 欢迎回到我们的 Unity 4.3 2D 系列教程。
 
-的确，Unity 4.5在不久前已经组合框发布了。但是本系列主要涉及的是Unity的2D特效，而这些特效正是在Unity 4.3版本中才被首次引入的。在4.5版本中，我们修复了一些bug并稍微修改了一些GUI元素。所以，如果你正在使用一个更新版本的引擎你应该时刻留意这一点，并且你应该注意你自己的编辑器与这个网页中的截图之间的细微差别。
+的确，Unity 4.5在不久前已经发布了。但是本系列主要涉及的是Unity的2D特效，而这些特效正是在Unity 4.3版本中才被首次引入的。在4.5版本中，我们修复了一些bug并稍微修改了一些GUI元素。所以，如果你正在使用一个更新版本的引擎你应该时刻留意这一点，并且你应该注意你自己的编辑器与这个网页中的截图之间的细微差别。
 
 通过这个系列教程的第一、二、三部分，你已经大致学会了使用Unity 2D工具所需要的相关知识，包括如何引入和初始化你的精灵。
 
@@ -1083,9 +1083,175 @@ congaLine 会为 conga 线中的猫咪储存 Transform 对象。你正在储存 
 
 为了完成这个游戏，你还需要在 Zombie Conga 中添加如下三个场景：
 
+首先是启动游戏时出现的界面：
+
+![Alt text](http://cdn1.raywenderlich.com/wp-content/uploads/2015/04/ZombieConga-MainMenu.png)
+
+然后是，当玩家获胜后奖励玩家出色表现的界面。
+
+![Alt text](http://cdn5.raywenderlich.com/wp-content/uploads/2015/04/ZombieConga-YouWin.png)
+
+最后是一个输掉游戏时的界面，这个界面将表达你因为技术不佳而产生的失望之情。
+
+![Alt text](http://cdn3.raywenderlich.com/wp-content/uploads/2015/04/ZombieConga-YouLose.png)
+
+快去画好这些图片再回来学习如何将他们添加到游戏里面。应该不会花费你多少时间的。
+
+![Alt text](http://cdn3.raywenderlich.com/wp-content/uploads/2015/04/waiting_for_drawing.png)
+
+好吧，我倒是的确没有时间等你去完成你的涂鸦。下载[资源文件](http://cdn3.raywenderlich.com/wp-content/uploads/2015/04/ZombieConga-Resources.zip)，这样我们就可以继续了。
+
+你所下载的文件有两个文件夹：Audio 和 Backgrounds。暂时先忽略 Audio，我们先来看 Backgrounds，因为这个文件夹里面有一些 Mike Berg 创作的图片。你将使用这些图片来作为以上三个场景的背景。 
+
+首先你需要将这三个图片引入并创建为精灵。你在本系列的第一个部分已经学过怎么做了，所以现在正好是考验你还记得多少的好时机。
+
+尝试着用 Backgrounds 中的图像创建精灵。为了让你的项目显得井井有条，将这些场景添加到你项目中的 Sprites 文件夹。同样的，记得稍微调整以下它们的设置来保证它们看上去不错！
+
+[点击查看如何创建精灵](http://www.raywenderlich.com/61532/unity-2d-tutorial-getting-started)
+
+你的项目浏览器中应该已经有三个新的精灵了，分别叫做StartUp, YouWin 和 YouLose，如下图所示：
+
+![Alt text](http://cdn4.raywenderlich.com/wp-content/uploads/2015/04/all_sprites_in_project.png)
+
+在创建你的新场景以前，确保你没有漏掉以前场景中的任何东西。在 Unity 菜单中选择 File\Save Scene 以保存 CongaScene。
+
+选择 File\New Scene 来创建新的场景。这会带来一个自带主摄影机（Main Camera）的空场景。
+
+![Alt text](http://cdn1.raywenderlich.com/wp-content/uploads/2015/04/empty_scene.png)
+
+选择 File\Save Scene as…，将新的场景命名为 LaunchScene 并将它保存在 Assets\Scenes 中。
+
+向场景中添加一个 StartUp 精灵，并放置在 (0,0,0)。你应该能够做到这些了，但是如果你还是忘记了，请看：</br>
+
+如何添加一个精灵：将 StartUp 从项目浏览器中拖到 Hierarchy中。在 Hierarchy 中选择 StartUp 并确保它的 Transform 的 Position 是 (0,0,0)
+
+既然背景已经处理好了，试试看自己设置 LaunchScene 的摄影机。当你完成的时候，你的游戏视图（Game view）会显示整张 StartUp 图片，就像这样：
+
+![Alt text](http://cdn2.raywenderlich.com/wp-content/uploads/2015/04/start_screen.png)
+
+如何设定场景：就像你在设置 CongaScene 时那样，你希望LaunchScene 的摄影机有一个大小为 3.2 的 orthographic 投影（projection）。
+
+在 Hierarchy 中选择主摄影机（Main Camera）。在监视器中，在下图所示红框中，选择 Projection 种类为 Orthographic，Size 为 3.2。如下图所示：
+
+![Alt text](http://cdn4.raywenderlich.com/wp-content/uploads/2015/04/camera_setup.png)
+
+现在你已经设定好了你的 LaunchScene。运行场景，你应该能够看到：
+
+![Alt text](http://cdn2.raywenderlich.com/wp-content/uploads/2015/04/start_screen.png)
+
+老实告诉我：你在等待着发生些什么的时候，盯着这幅图持续了多久？
+
+你希望在游戏开始的时候显示这个场景，然后加载 CongaScene，这样用户就能开始玩这个游戏了。为了达到这个目的，你需要添加一个脚本，等待数秒以后加载另一个场景。
+
+新建一个名为 StartGame 的 C# 脚本并将它添加到主摄影机（Main Camera）。
+
+注：你现在正在往摄影机添加脚本，但是你实际上时可以将它添加到StartUp 或是其他的空 GameObject。只要是一个场景中的活动的对象就行。
+
+在 MonoDevelop 中打开 StartGame.cs 并将里面的内容更换为如下代码：
+
+	using UnityEngine;
+ 
+    public class StartGame : MonoBehaviour {
+ 
+		// Use this for initialization
+		void Start () {
+			Invoke("LoadLevel", 3f);
+		}
+ 
+		void LoadLevel() {
+			Application.LoadLevel("CongaScene");
+		}
+	}
+
+这个脚本用了两个你见过的技术。在 Start 中，在 3 秒的延迟后调用 Invoke 来执行 LoadLevel。在 LoadLevel 中，调用 Application.LoadLevel 来加载 CongaScene。
+
+保存文件(File\Save)并转回 Unity。
+
+运行场景。在 3 秒以后，你会在 Console 中看到如下这个异常：
+
+![Alt text](http://cdn2.raywenderlich.com/wp-content/uploads/2015/04/missing_level_exception.png)
+
+之所以会有这个异常，是因为 Unity 不知道你其他场景的信息。为什么呢？其他场景难道不是在项目浏览器中的吗？
+
+是的，的确在那儿，但是 Unity 不曾假设你会希望在最终的 build 中包含你项目中的所有东西。这是一个很好的做法，因为你会创建许多你在最后不会用到的东西。
+
+为了告诉 Unity 哪些场景是游戏的组成部分，你需要把它们加到 build 里面。
+
+在 Unity 的菜单中，选择 File\Build Settings… 来打开 Build Settings 对话框，如下图所示：
+
+![Alt text](http://cdn1.raywenderlich.com/wp-content/uploads/2015/04/build_settings-459x500.png)
+
+在对话框的左下方包括了你能 build 的平台。不要担心如果你的列表和上图不一致。
+
+在大多数情况下，目前选择的平台一般为PC, Mac & Linux Standalone，这个平台会是高亮的并且具有一个 Unity 商标来说明它是被选中的。
+
+为了向这个 build 中添加场景，只需要将场景从项目浏览器中拖动到上方的标记了Scenes In Build 的区域即可。将 LaunchScene 和 CongaScene 都添加到这个 build 中，如下图所示：
+
+![Alt text](http://cdn1.raywenderlich.com/wp-content/uploads/2015/04/adding_scenes.gif)
+
+就像你在下面这张图中看到的那样，Scenes In Build 列表中的层次从 0 开始计数。你可以通过拖动层次来重新设定它们的顺序，并且在 Unity 的外部运行你的游戏时，你的玩家会从层次 0 开始游戏。在调用 LoadLevel 时，你可以使用索引数字（译者注：即时场景的层次数）而不是场景名字。
+
+![Alt text](http://cdn4.raywenderlich.com/wp-content/uploads/2015/04/scenes_in_build.png)
+
+关闭对话框并运行场景。这一次 startup 场景出现 3 秒以后玩家就能开始正常地玩游戏了。
+
+![Alt text](http://cdn2.raywenderlich.com/wp-content/uploads/2015/04/starting_game.gif)
+
+你现在应该创建并添加两个另外的场景了：WinScene 和 LoseScene。它们会分别显示适当的背景图片 —— YouWin 和YouLose。然后 3 秒之后，重新加载 CongaScene。
+
+重复你新建 LaunchScene 时的步骤。不同的是，对于这两个场景，你可以重用 StartGame.cs 而不用创建新的脚本。以下是一条捷径：
+
+你可以复制已经存在的 LaunchScene 并更换它们的图片，这样就不用去创建新的场景了。
+
+想要这么做，首先通过 File\Save Scene 保存 LaunchScene，这可以确保你不会丢失任何重要成果。
+
+然后再一次保存你的场景，不过这一次我们使用 File\Save Scene as…  并将名字更换为 WinScene。
+
+从 Hierarchy 中删除 StartUp 并将起替换为项目浏览器中的 YouWin。
+
+大功告成。保存场景（File\Save）并重复以上步骤来创建 LoseScene。
+
+在创建完你的新场景以后，将它们添加到 build 中。你的 build 的设置现在看起来应该是这样的，虽然 LaunchScene 之后的排序实际上并不重要。
+
+![Alt text](http://cdn1.raywenderlich.com/wp-content/uploads/2015/04/all_scenes.png)
+
+这些场景放置好了以后，你需要修改你的代码来启动它们，而不是向 Console 打印消息了。
+
+在 MonoDevelop 中打开 ZombieController.cs。
+
+在 OnTriggerEnter2D 中找到如下代码：
+
+	Debug.Log("You won!");
+	Application.LoadLevel("CongaScene");
+
+将其替换为：
+
+	Application.LoadLevel("WinScene");
+
+这样游戏就会在游戏获胜后加载 WinScene 而不是 CongaScene。
+
+现在去修改 OnTriggerEnter2D 让它可以在适当的时间加载 LoseScene 吧。不知道该怎么做就看下面这部分内容：
+
+还是在 ZombieController.cs 中，找到 OnTriggerEnter2D 中的如下代码：
+
+	Debug.Log("You lost!");
+	Application.LoadLevel("CongaScene");
+
+更换为：
+
+	Application.LoadLevel("LoseScene");
+
+现在当玩家输掉游戏以后，他们自己就知道了。
+
+保存文件(File\Save)并转回 Unity。
+
+现在你可以运行完整版的游戏了。为了更好地体验游戏，在玩之前转到 LaunchScene。在开始界面之后，玩上几轮以确保你赢一些而且输一些。哈哈。这看起来真不错 —— 我应该去注册一个商标。
+
+现在你的场景都设置好了，是时候给弄点音乐了。
+
+##音频
 
 
 
 
 
-	
